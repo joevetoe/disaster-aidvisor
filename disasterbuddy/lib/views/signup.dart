@@ -29,6 +29,7 @@ class _SignupState extends State<Signup> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _agreedToPrivacyPolicy = false;
+  bool _agreedToDisclaimer = false;
 
   static const _orangeBorder = Color(0xffE8960C);
   static const _darkNavy = Color(0xff1B2E4B);
@@ -273,12 +274,51 @@ class _SignupState extends State<Signup> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 14),
+
+                  // Disclaimer checkbox
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Checkbox(
+                          value: _agreedToDisclaimer,
+                          tristate: false,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _agreedToDisclaimer = value == true;
+                            });
+                          },
+                          activeColor: _orangeBorder,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          side: const BorderSide(color: _hintGray),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'I understand that Disaster AIDvisor is for general informational purposes only and is not a substitute for emergency services. If you are in immediate danger, please call 911.',
+                          style: GoogleFonts.raleway(
+                            textStyle: const TextStyle(
+                              color: Color(0xff666666),
+                              fontSize: 13,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 24),
 
                   // Sign Up button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _agreedToPrivacyPolicy ? _darkNavy : const Color(0xffCCCCCC),
+                      backgroundColor: (_agreedToPrivacyPolicy && _agreedToDisclaimer) ? _darkNavy : const Color(0xffCCCCCC),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -286,7 +326,7 @@ class _SignupState extends State<Signup> {
                       minimumSize: const Size(double.infinity, 54),
                       elevation: 0,
                     ),
-                    onPressed: _agreedToPrivacyPolicy ? _handleSignUp : null,
+                    onPressed: (_agreedToPrivacyPolicy && _agreedToDisclaimer) ? _handleSignUp : null,
                     child: Text(
                       'Sign Up',
                       style: GoogleFonts.raleway(
@@ -344,9 +384,9 @@ class _SignupState extends State<Signup> {
   }
 
   Future<void> _handleSignUp() async {
-    if (!_agreedToPrivacyPolicy) {
+    if (!_agreedToPrivacyPolicy || !_agreedToDisclaimer) {
       Fluttertoast.showToast(
-        msg: "Please agree to the Privacy Policy",
+        msg: "Please agree to the Privacy Policy and Disclaimer",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
         backgroundColor: Colors.black54,

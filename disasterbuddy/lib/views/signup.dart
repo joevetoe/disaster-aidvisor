@@ -31,6 +31,16 @@ class _SignupState extends State<Signup> {
   bool _agreedToPrivacyPolicy = false;
   bool _agreedToDisclaimer = false;
 
+  bool get _allFieldsFilled =>
+      firstNameController.text.isNotEmpty &&
+      lastNameController.text.isNotEmpty &&
+      zipCodeController.text.isNotEmpty &&
+      _emailController.text.isNotEmpty &&
+      _passwordController.text.isNotEmpty &&
+      _confirmPasswordController.text.isNotEmpty &&
+      _agreedToPrivacyPolicy &&
+      _agreedToDisclaimer;
+
   static const _orangeBorder = Color(0xffE8960C);
   static const _darkNavy = Color(0xff1B2E4B);
   static const _hintGray = Color(0xffBBBBBB);
@@ -118,6 +128,7 @@ class _SignupState extends State<Signup> {
                   TextField(
                     controller: firstNameController,
                     textCapitalization: TextCapitalization.words,
+                    onChanged: (_) => setState(() {}),
                     decoration: _fieldDecoration(
                       hint: 'First Name',
                       icon: Icons.person_outline,
@@ -130,6 +141,7 @@ class _SignupState extends State<Signup> {
                   TextField(
                     controller: lastNameController,
                     textCapitalization: TextCapitalization.words,
+                    onChanged: (_) => setState(() {}),
                     decoration: _fieldDecoration(
                       hint: 'Last Name',
                       icon: Icons.person_outline,
@@ -142,6 +154,7 @@ class _SignupState extends State<Signup> {
                   TextField(
                     controller: zipCodeController,
                     keyboardType: TextInputType.number,
+                    onChanged: (_) => setState(() {}),
                     decoration: _fieldDecoration(
                       hint: 'Zip Code',
                       icon: Icons.location_on_outlined,
@@ -154,6 +167,7 @@ class _SignupState extends State<Signup> {
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    onChanged: (_) => setState(() {}),
                     decoration: _fieldDecoration(
                       hint: 'Email',
                       icon: Icons.mail_outline,
@@ -166,6 +180,7 @@ class _SignupState extends State<Signup> {
                   TextField(
                     obscureText: !_isPasswordVisible,
                     controller: _passwordController,
+                    onChanged: (_) => setState(() {}),
                     decoration: _fieldDecoration(
                       hint: 'Password',
                       icon: Icons.lock_outline,
@@ -192,6 +207,7 @@ class _SignupState extends State<Signup> {
                   TextField(
                     obscureText: !_isConfirmPasswordVisible,
                     controller: _confirmPasswordController,
+                    onChanged: (_) => setState(() {}),
                     decoration: _fieldDecoration(
                       hint: 'Confirm Password',
                       icon: Icons.lock_outline,
@@ -318,7 +334,7 @@ class _SignupState extends State<Signup> {
                   // Sign Up button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: (_agreedToPrivacyPolicy && _agreedToDisclaimer) ? _darkNavy : const Color(0xffCCCCCC),
+                      backgroundColor: _allFieldsFilled ? _darkNavy : const Color(0xffCCCCCC),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -326,7 +342,7 @@ class _SignupState extends State<Signup> {
                       minimumSize: const Size(double.infinity, 54),
                       elevation: 0,
                     ),
-                    onPressed: (_agreedToPrivacyPolicy && _agreedToDisclaimer) ? _handleSignUp : null,
+                    onPressed: _allFieldsFilled ? _handleSignUp : null,
                     child: Text(
                       'Sign Up',
                       style: GoogleFonts.raleway(

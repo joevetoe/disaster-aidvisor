@@ -5,10 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../constants/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/local_storage.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/text_widget.dart';
 import 'chatting_screen.dart';
 import 'signup.dart';
 
@@ -23,6 +21,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   bool isEmailVerified = false;
   FirebaseAuth auth = FirebaseAuth.instance;
   Timer? timer;
+
+  static const _darkNavy = Color(0xff1B2E4B);
+  static const _orangeAccent = Color(0xffE8960C);
+
   @override
   void initState() {
     super.initState();
@@ -54,95 +56,165 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   void dispose() {
     timer?.cancel();
-
     super.dispose();
   }
 
-  var height = Get.height;
-  var width = Get.width;
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: MyColors.blackColor,
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(Icons.check),
-              // Image.asset(AppImages.varifyemail),
-              SizedBox(
-                height: height * 0.03,
-              ),
-              TextWidgetCustom(
-                text: "Check Your Email".tr,
-                size: 18,
-                fontWeight: FontWeight.w600,
-                color: MyColors.whiteColor,
-              ),
-              SizedBox(
-                height: height * 0.01,
-              ),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                child: Center(
-                  child: TextWidgetCustom(
-                    text:
-                        'We have sent you Email on \n${auth.currentUser?.email}',
-                    size: 11,
-                    color: MyColors.whiteColor,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Email icon
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffFFF3E0),
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: const Icon(
+                      Icons.mail_outline,
+                      size: 40,
+                      color: _orangeAccent,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 32),
+
+                  // Heading
+                  Text(
+                    'Check Your Email',
+                    style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(
+                        color: _darkNavy,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Subtitle
+                  Text(
+                    'We have sent a verification email to',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(
+                        color: Color(0xff666666),
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    auth.currentUser?.email ?? '',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(
+                        color: _darkNavy,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Loading spinner
+                  const SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: CircularProgressIndicator(
+                      color: _orangeAccent,
+                      strokeWidth: 3,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  Text(
+                    'Verifying email...',
+                    style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(
+                        color: Color(0xff999999),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Spam notice
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffF8F9FA),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xffEEEEEE)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.info_outline, color: Color(0xff999999), size: 20),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Please check your spam folder in case you cannot find the verification email.',
+                            style: GoogleFonts.raleway(
+                              textStyle: const TextStyle(
+                                color: Color(0xff666666),
+                                fontSize: 13,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Resend button
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: _orangeAccent),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    onPressed: () {
+                      try {
+                        FirebaseAuth.instance.currentUser
+                            ?.sendEmailVerification();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Verification email sent!'),
+                            backgroundColor: _orangeAccent,
+                          ),
+                        );
+                      } catch (e) {
+                        debugPrint('$e');
+                      }
+                    },
+                    child: Text(
+                      'Resend Email',
+                      style: GoogleFonts.raleway(
+                        textStyle: const TextStyle(
+                          color: _orangeAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                height: height * 0.03,
-              ),
-              const Center(
-                  child: CircularProgressIndicator(color: Colors.white)),
-              SizedBox(
-                height: height * 0.03,
-              ),
-              Center(
-                child: TextWidgetCustom(
-                  text: 'Verifying email....',
-                  size: 14,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.whiteColor,
-                ),
-              ),
-              SizedBox(
-                height: height * 0.03,
-              ),
-              Center(
-                child: TextWidgetCustom(
-                  text:
-                      'Please check your spam folder in case you cannot find the verification code.',
-                  size: 16,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.whiteColor,
-                ),
-              ),
-              SizedBox(
-                height: height * 0.02,
-              ),
-              MyCustomButton(
-                height: 40,
-                // fontSize: 16,
-                width: double.infinity,
-                ontap: () {
-                  try {
-                    FirebaseAuth.instance.currentUser?.sendEmailVerification();
-                  } catch (e) {
-                    debugPrint('$e');
-                  }
-                },
-                text: "Resend Email",
-                color: MyColors.whiteColor,
-              ),
-            ],
+            ),
           ),
         ),
       ),

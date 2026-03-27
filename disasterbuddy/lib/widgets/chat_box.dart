@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants/colors.dart';
-import 'custom_text_field.dart';
-
 class ChatBox extends StatelessWidget {
   const ChatBox({
     super.key,
@@ -17,80 +14,43 @@ class ChatBox extends StatelessWidget {
   final Function()? onTap;
   final TextEditingController? controller;
 
-  static const iconSize = 23.0;
-  static final double screenWidth =
-      MediaQueryData.fromView(WidgetsBinding.instance.window).size.width;
-
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 5.0),
-              decoration: BoxDecoration(
-                color: kAppBarColor,
-                borderRadius: BorderRadius.circular(25.0),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      constraints: const BoxConstraints(maxHeight: 100),
-                      child: CustomTextField(
-                        maxLines: (controller?.text.length ?? 0) > 80
-                            ? 3
-                            : (controller?.text.length ?? 0) > 40
-                                ? 2
-                                : 1,
-                        focusNode: focusNode,
-                        onChanged: onChanged,
-                        keyBoardType: TextInputType.multiline,
-                        controller: controller,
-                        hideBorder: true,
-                        // suffix: IconButton(
-                        //   icon: const Icon(Icons.attachment),
-                        //   onPressed: onTap,
-                        // ),
-                        // prefix: const Icon(
-                        //   Icons.emoji_emotions_rounded,
-                        //   color: kSecondaryColor,
-                        // ),
-                        hintText: 'Message',
-                      ),
-                    ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        decoration: BoxDecoration(
+          color: const Color(0xffF0F2F5),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: const Color(0xffE0E0E0)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                focusNode: focusNode,
+                onChanged: onChanged,
+                keyboardType: TextInputType.multiline,
+                maxLines: 3,
+                minLines: 1,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Color(0xff1a1a1a),
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'Type a message...',
+                  hintStyle: TextStyle(
+                    color: Color(0xff999999),
+                    fontSize: 15,
                   ),
-                  // Container(
-                  //   margin: const EdgeInsets.only(right: 8.0),
-                  //   width: MediaQuery.of(context).size.width * 0.06,
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.end,
-                  //     children: [
-                  //       GestureDetector(
-                  //         onTap: onTap,
-                  //         child: Transform.rotate(
-                  //           angle: 3.8,
-                  //           child: const Icon(
-                  //             Icons.attachment_rounded,
-                  //             color: kSecondaryColor,
-                  //             size: iconSize,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //       // const Icon(
-                  //       //   Icons.photo_camera_rounded,
-                  //       //   color: kSecondaryColor,
-                  //       //   size: 23.0,
-                  //       // ),
-                  //     ],
-                  //   ),
-                  // ),
-                ],
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

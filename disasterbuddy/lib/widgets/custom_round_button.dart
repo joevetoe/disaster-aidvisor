@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants/colors.dart';
-
 class CustomRoundButton extends StatelessWidget {
   const CustomRoundButton({
     super.key,
@@ -23,12 +21,12 @@ class CustomRoundButton extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       child: Container(
         decoration: const BoxDecoration(
-          color: Colors.orange,
+          color: Color(0xffE8960C),
           shape: BoxShape.circle,
         ),
         padding: EdgeInsets.all(padding),
         child: Icon(
-          icon ?? Icons.mic_rounded,
+          icon ?? Icons.send_rounded,
           size: iconSize,
           color: Colors.white,
         ),

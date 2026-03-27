@@ -2318,9 +2318,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.blackColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: MyColors.blackColor,
+        backgroundColor: const Color(0xff1B2E4B),
         leading: GestureDetector(
           onTap: () {
             showMenu(
@@ -2391,18 +2391,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 ]);
             //
           },
-          child: Icon(
+          child: const Icon(
             Icons.menu,
-            color: MyColors.whiteColor,
+            color: Colors.white,
           ),
         ),
-        // leadingWidth: 0,
         centerTitle: true,
-        title: MyTextWidgetCustom(
-          text: "DISASTER AIDVISOR",
-          color: MyColors.whiteColor,
-          fontWeight: FontWeight.w600,
-          size: 25,
+        title: const Text(
+          "DISASTER AIDVISOR",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+            letterSpacing: 1.2,
+          ),
         ),
         actions: [
           GestureDetector(
@@ -2491,26 +2493,18 @@ class _ChattingScreenState extends State<ChattingScreen> {
       body: Column(
         children: [
           buildChat(),
-          Row(
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              border: Border(top: BorderSide(color: Color(0xffE0E0E0), width: 0.5)),
+            ),
+            child: Row(
             children: [
               ChatBox(
                 onChanged: (v) {
                   setState(() {});
                 },
-                // onTap: () async {
-                //   // String? path = await uploadPic();
-                //   // if (path != null) {
-                //   //   String date =
-                //   //       DateTime.now().millisecondsSinceEpoch.toString();
-                //   //   chatref?.child(date).set({
-                //   //     "message": path,
-                //   //     "email": FirebaseAuth.instance.currentUser?.email
-                //   //             ?.replaceAll('.', '') ??
-                //   //         '',
-                //   //     "messagetype": "${fileName?.split('.').last}",
-                //   //   });
-                //   // }
-                // },
                 focusNode: _node,
                 controller: _controller,
               ),
@@ -2583,6 +2577,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 padding: 10.0,
               )
             ],
+          ),
           ),
         ],
       ),

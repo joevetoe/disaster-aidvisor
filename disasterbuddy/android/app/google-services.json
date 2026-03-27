@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "310932018492",
+    "firebase_url": "https://disasterbuddy-9f1ee-default-rtdb.firebaseio.com",
+    "project_id": "disasterbuddy-9f1ee",
+    "storage_bucket": "disasterbuddy-9f1ee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310932018492:android:3d99a7908fdeffa159ba39",
+        "android_client_info": {
+          "package_name": "com.codeqo.disasteradvisor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7kAOOy-IyFz8Pc_GJBE3OFomy7IZE_5E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

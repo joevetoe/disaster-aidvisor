@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disaster AIDvisor — App Update Proposal</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 0 30px;
+      color: #1a1a1a;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+    h1 {
+      font-size: 28px;
+      color: #1a1a1a;
+      border-bottom: 3px solid #e45a04;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-size: 22px;
+      color: #032553;
+      margin-top: 40px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+    }
+    h3 {
+      font-size: 17px;
+      color: #333;
+      margin-top: 25px;
+    }
+    p { margin: 10px 0; }
+    strong { color: #1a1a1a; }
+    .priority {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: bold;
+      color: white;
+      margin-right: 8px;
+    }
+    .critical { background-color: #dc3545; }
+    .high { background-color: #e45a04; }
+    .meta {
+      color: #555;
+      font-size: 14px;
+      margin: 4px 0;
+    }
+    ul { padding-left: 24px; }
+    ul li { margin-bottom: 10px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px 0;
+      font-size: 14px;
+    }
+    th {
+      background-color: #032553;
+      color: white;
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e0e0e0;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background-color: #f8f9fa; }
+    tr:last-child td {
+      font-weight: bold;
+      border-top: 2px solid #032553;
+      background-color: #eef2f7;
+    }
+    .package-box {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 12px 0;
+      background-color: #fafafa;
+    }
+    .package-box.recommended {
+      border-color: #e45a04;
+      background-color: #fff8f2;
+    }
+    .package-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #032553;
+      margin-bottom: 4px;
+    }
+    .package-price {
+      font-size: 15px;
+      font-weight: bold;
+      color: #e45a04;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 35px 0;
+    }
+    .footer {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+    .next-steps ol li { margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+  <h1>Disaster AIDvisor — App Update Proposal</h1>
+
+  <h2>Project Overview</h2>
+  <p>Disaster AIDvisor is a live mobile application on the Apple App Store and Google Play Store that provides AI-powered disaster preparedness and recovery guidance, trained on BuildSOS's curated knowledge base of 1,000+ expert-reviewed Q&amp;A pairs.</p>
+  <p>This proposal focuses on cleaning up the existing app — fixing bugs, securing the backend, improving the chat experience, and polishing the UI. The goal is a robust, professional user experience that reflects the quality of the content behind it, without adding new features or rebuilding from scratch.</p>
+
+  <hr>
+
+  <!-- PHASE 1 -->
+  <h2>Phase 1 — Security, AI Upgrade &amp; Terms Compliance</h2>
+  <p><span class="priority critical">CRITICAL</span></p>
+  <p class="meta"><strong>Estimated Timeline:</strong> 2–3 weeks</p>
+  <p class="meta"><strong>Investment:</strong> $1,170 – $1,625</p>
+
+  <h3>What's Included</h3>
+  <ul>
+    <li><strong>Terms &amp; Conditions Acceptance Screen:</strong> Add a required disclaimer pop-up that users must accept before using the app. This ensures legal compliance and protects BuildSOS from liability. Users will see the full disclaimer and must tap "I Agree" before accessing the chat. Acceptance is recorded with a timestamp in their user profile.</li>
+    <li><strong>Secure API Key Management:</strong> Move the AI service API key from the app's source code to a secure server-side Firebase Cloud Function. Currently, the API key is embedded directly in the published app — anyone with basic technical knowledge can extract it and use it at your expense. This eliminates that vulnerability.</li>
+    <li><strong>Upgrade AI Model:</strong> Migrate from OpenAI GPT-3.5-turbo to Anthropic Claude Sonnet, a more advanced AI model that provides higher quality responses, better safety guardrails for emergency-related advice, and stronger adherence to its role as a disaster advisor.</li>
+    <li><strong>Custom AI System Prompt — "Bumpers":</strong> Develop a comprehensive system prompt that keeps the AI focused on disaster preparedness, response, and recovery topics. The AI will stay in character as Disaster AIDvisor and won't respond to off-topic requests like restaurant recommendations. It will draw from your curated knowledge base as its primary source of truth.</li>
+    <li><strong>Integrate Knowledge Base into AI System:</strong> Migrate the 1,000+ curated Q&amp;A pairs (57 entry, 320 prepare, 270 recovery, 50 respond, 398 contractor) from hardcoded app logic into a structured Firestore collection. The AI will use this content as its primary reference, delivering natural conversational responses grounded in your expert-reviewed material. Your team can add, edit, or remove Q&amp;A entries at any time without requiring an app update.</li>
+    <li><strong>Secure User Data Storage:</strong> Fix an existing vulnerability where user passwords are stored in plaintext in the database and on-device. Implement encrypted secure storage.</li>
+  </ul>
+
+  <h3>Why This Phase Is Urgent</h3>
+  <p>The current app has the AI service API key embedded directly in the source code. Anyone can extract this key from the published app and run up charges on your account. Additionally, the terms and conditions acceptance is a legal necessity that protects BuildSOS from liability.</p>
+
+  <h3>Cost Breakdown</h3>
+  <table>
+    <tr>
+      <th>Task</th>
+      <th>Est. Hours</th>
+      <th>Cost</th>
+      <th>Justification</th>
+    </tr>
+    <tr>
+      <td>Terms &amp; conditions acceptance screen</td>
+      <td>2–3 hrs</td>
+      <td>$130 – $195</td>
+      <td>Building a mandatory disclaimer pop-up that appears before first use, with scrollable terms text, "I Agree" button, and timestamp recording in Firestore. Integrated into the app launch flow so it cannot be bypassed.</td>
+    </tr>
+    <tr>
+      <td>Firebase Cloud Function setup &amp; deployment</td>
+      <td>4–5 hrs</td>
+      <td>$260 – $325</td>
+      <td>Creating a secure server-side function, configuring Firebase project settings, setting up environment variables, deploying, and testing end-to-end connectivity from the app to the cloud function to the AI service.</td>
+    </tr>
+    <tr>
+      <td>Claude AI integration &amp; API migration</td>
+      <td>3–4 hrs</td>
+      <td>$195 – $260</td>
+      <td>Rewriting the chat service layer to use the Anthropic API format, updating request/response handling, error handling, and verifying response quality across different question types.</td>
+    </tr>
+    <tr>
+      <td>Custom AI system prompt development</td>
+      <td>3–4 hrs</td>
+      <td>$195 – $260</td>
+      <td>Crafting and testing a detailed system prompt that keeps the AI on-topic with "bumpers" — covering disaster preparedness, FEMA processes, insurance guidance, evacuation planning, and contractor advice. Requires iterative testing to ensure it stays in character and gives accurate, safe responses.</td>
+    </tr>
+    <tr>
+      <td>Knowledge base migration &amp; integration</td>
+      <td>4–6 hrs</td>
+      <td>$260 – $390</td>
+      <td>Migrating 1,000+ curated Q&amp;A pairs from hardcoded app logic into a structured Firestore collection. Building the retrieval system that feeds relevant knowledge base entries to the AI as context. Organized by your existing categories (entry, prepare, recovery, respond, contractor) so entries can be managed without app updates.</td>
+    </tr>
+    <tr>
+      <td>Secure user data storage</td>
+      <td>2–3 hrs</td>
+      <td>$130 – $195</td>
+      <td>Replacing plaintext password storage with encrypted secure storage on-device, removing raw passwords from Firestore, and testing across iOS and Android.</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 1 Total</strong></td>
+      <td><strong>18–25 hrs</strong></td>
+      <td><strong>$1,170 – $1,625</strong></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <hr>
+
+  <!-- PHASE 2 -->
+  <h2>Phase 2 — Chat Experience &amp; UI Polish</h2>
+  <p><span class="priority high">HIGH</span></p>
+  <p class="meta"><strong>Estimated Timeline:</strong> 2–3 weeks</p>
+  <p class="meta"><strong>Investment:</strong> $910 – $1,495</p>
+
+  <h3>What's Included</h3>
+  <ul>
+    <li><strong>Suggested Conversation Starters:</strong> Add clickable prompt buttons on the chat screen so users know what to ask. Organized by your existing categories — Preparing, Responding, Recovery, Contractors — so users can tap a topic and see relevant questions to get the conversation started.</li>
+    <li><strong>UI Cleanup &amp; Button Fixes:</strong> Fix awkward button styling, spacing, and layout issues throughout the app. Clean up clunky visual elements to give the app a polished, professional feel without a full redesign.</li>
+    <li><strong>Improved Loading Experience:</strong> Replace the current plain text "loading" indicator with a professional typing animation while the AI generates its response.</li>
+    <li><strong>Formatted AI Responses:</strong> Render AI responses with proper formatting — bold text, bullet points, numbered lists, and clickable links — instead of plain text walls.</li>
+    <li><strong>Bug Fixes &amp; Testing:</strong> Comprehensive testing and fixing of existing bugs across both iOS and Android, including edge cases in the chat flow, authentication issues, and error handling.</li>
+    <li><strong>Placeholder Logo:</strong> Replace the current AI-generated-looking logo with a cleaner placeholder until the new branding is ready (~6 weeks). Easy to swap out later.</li>
+  </ul>
+
+  <h3>Why This Phase Matters</h3>
+  <p>These are the "easy wins" that make the biggest difference in how the app feels to users. Suggested prompts solve the blank-screen problem, and UI polish makes the app look intentional rather than unfinished.</p>
+
+  <h3>Cost Breakdown</h3>
+  <table>
+    <tr>
+      <th>Task</th>
+      <th>Est. Hours</th>
+      <th>Cost</th>
+      <th>Justification</th>
+    </tr>
+    <tr>
+      <td>Suggested conversation starters</td>
+      <td>4–6 hrs</td>
+      <td>$260 – $390</td>
+      <td>Building the prompt suggestion UI with category tabs matching your knowledge base categories (entry, prepare, recovery, respond, contractor). Each category shows 5–8 tappable starter questions. Tapping a question sends it to the AI automatically. Includes styling to match the existing chat design.</td>
+    </tr>
+    <tr>
+      <td>UI cleanup &amp; button fixes</td>
+      <td>3–5 hrs</td>
+      <td>$195 – $325</td>
+      <td>Fixing awkward button sizing, spacing, and alignment across all screens. Cleaning up visual inconsistencies in the chat bubbles, input bar, and menu items. Making the overall layout feel polished and intentional.</td>
+    </tr>
+    <tr>
+      <td>Loading animation</td>
+      <td>1–2 hrs</td>
+      <td>$65 – $130</td>
+      <td>Replacing the plain text "loading" with a professional typing/thinking animation in the chat bubble area.</td>
+    </tr>
+    <tr>
+      <td>Markdown rendering for AI responses</td>
+      <td>2–3 hrs</td>
+      <td>$130 – $195</td>
+      <td>Integrating a markdown renderer into chat bubbles so AI responses display with proper bold text, bullet points, numbered lists, and clickable hyperlinks instead of raw unformatted text.</td>
+    </tr>
+    <tr>
+      <td>Bug fixes &amp; testing</td>
+      <td>3–5 hrs</td>
+      <td>$195 – $325</td>
+      <td>Comprehensive testing across iOS and Android — fixing authentication flow issues, chat edge cases (empty messages, very long responses, rapid sending), error handling, and any other bugs discovered during testing.</td>
+    </tr>
+    <tr>
+      <td>Placeholder logo</td>
+      <td>1–2 hrs</td>
+      <td>$65 – $130</td>
+      <td>Designing or sourcing a cleaner placeholder logo that doesn't look obviously AI-generated. Set up so it's easy to swap when the new branding arrives.</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 2 Total</strong></td>
+      <td><strong>14–23 hrs</strong></td>
+      <td><strong>$910 – $1,495</strong></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <hr>
+
+  <!-- INVESTMENT SUMMARY -->
+  <h2>Investment Summary</h2>
+  <table>
+    <tr>
+      <th>Phase</th>
+      <th>Scope</th>
+      <th>Investment Range</th>
+    </tr>
+    <tr>
+      <td>Phase 1</td>
+      <td>Security, AI Upgrade, Knowledge Base &amp; Terms Compliance</td>
+      <td>$1,170 – $1,625</td>
+    </tr>
+    <tr>
+      <td>Phase 2</td>
+      <td>Chat Experience &amp; UI Polish</td>
+      <td>$910 – $1,495</td>
+    </tr>
+    <tr>
+      <td><strong>Total</strong></td>
+      <td><strong>Complete Cleanup &amp; Improvement</strong></td>
+      <td><strong>$2,080 – $3,120</strong></td>
+    </tr>
+  </table>
+
+  <h3>Package Options</h3>
+
+  <div class="package-box">
+    <div class="package-title">Essential (Phase 1 only)</div>
+    <div class="package-price">Starting at $1,170</div>
+    <p>The app is secure, legally compliant with terms acceptance, powered by a superior AI model, and your curated knowledge base drives every response. The most urgent issues are resolved.</p>
+  </div>
+
+  <div class="package-box recommended">
+    <div class="package-title">Complete (Both Phases) — Recommended</div>
+    <div class="package-price">Starting at $2,080</div>
+    <p>Everything in Phase 1, plus the chat experience improvements and UI polish that make the app feel professional and easy to use. Recommended for the best user experience before re-pushing to the app stores.</p>
+  </div>
+
+  <hr>
+
+  <!-- ONGOING COSTS -->
+  <h2>Ongoing Costs</h2>
+  <p>After the update, the following recurring costs apply:</p>
+  <ul>
+    <li><strong>AI API Usage (Claude by Anthropic):</strong> Approximately $0.02 per conversation. Estimated $20–$50/month depending on user volume.</li>
+    <li><strong>Firebase:</strong> Likely remains on the free tier unless user volume increases significantly.</li>
+    <li><strong>Apple Developer Account:</strong> $99/year (existing).</li>
+    <li><strong>Google Play Developer Account:</strong> $25 one-time (existing).</li>
+  </ul>
+
+  <hr>
+
+  <!-- WHAT'S NEXT -->
+  <h2>What's Next — Policy Advisor &amp; Claims Advisor</h2>
+  <p>Once Disaster AIDvisor is cleaned up and re-published, the same approach and lessons learned will be applied to the Policy Advisor and Claims Advisor apps. Separate proposals will be provided for each, but the security improvements (Cloud Function, secure storage) and AI upgrade (Claude migration) built for Disaster AIDvisor will carry over and reduce the scope of work for the other two apps.</p>
+
+  <hr>
+
+  <!-- NEXT STEPS -->
+  <h2>Next Steps</h2>
+  <div class="next-steps">
+    <ol>
+      <li>Review and approve the desired phase(s)</li>
+      <li>Create an Anthropic API account at console.anthropic.com for the AI upgrade</li>
+      <li>Share any additional training documents, user flow docs, and requirements via Google Drive or GitHub</li>
+      <li>Development begins immediately upon approval</li>
+      <li>Each phase concludes with a review and testing before re-publishing to the app stores</li>
+    </ol>
+  </div>
+
+  <div class="footer">
+    <p>Prepared for BuildSOS, LLC</p>
+  </div>
+
+</body>
+</html>

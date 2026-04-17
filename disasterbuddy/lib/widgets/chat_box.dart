@@ -18,10 +18,10 @@ class ChatBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         decoration: BoxDecoration(
           color: const Color(0xffF0F2F5),
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(color: const Color(0xffE0E0E0)),
         ),
         child: Row(
@@ -45,7 +45,8 @@ class ChatBox extends StatelessWidget {
                     fontSize: 15,
                   ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 ),
               ),
             ),

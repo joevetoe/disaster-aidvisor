@@ -20,9 +20,9 @@ class CustomRoundButton extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.translucent,
       child: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xffE8960C),
-          shape: BoxShape.circle,
+        decoration: BoxDecoration(
+          color: const Color(0xffE8960C),
+          borderRadius: BorderRadius.circular(14),
         ),
         padding: EdgeInsets.all(padding),
         child: Icon(

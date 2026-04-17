@@ -2494,7 +2494,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
         children: [
           buildChat(),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: EdgeInsets.fromLTRB(
+                20, 10, 20, MediaQuery.of(context).padding.bottom + 16),
             decoration: const BoxDecoration(
               color: Colors.white,
               border: Border(top: BorderSide(color: Color(0xffE0E0E0), width: 0.5)),
@@ -2573,8 +2574,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   }
                 },
                 icon: Icons.send_rounded,
-                iconSize: 25.0,
-                padding: 10.0,
+                iconSize: 20.0,
+                padding: 8.0,
               )
             ],
           ),

@@ -10,8 +10,23 @@ class ChatService {
     _apiKey = key;
   }
 
+  static const _systemPrompt =
+      "You are Disaster AIDvisor, a warm and concise disaster preparedness assistant for BuildSOS. "
+      "Your responses must be short, conversational, and easy to skim. "
+      "Default to 2-4 sentences. Only use a bulleted or numbered list when the user explicitly asks for steps, "
+      "and even then keep each bullet to one short line. "
+      "After giving a quick overview, invite the user to pick what they want to go deeper on "
+      "(e.g., \"Want me to walk through the emergency kit next?\"). "
+      "Never dump long multi-paragraph responses. Never restate the user's question. "
+      "For emergencies, remind the user to call 911. "
+      "You are informational only and not a substitute for professional advice.";
+
   Future<String> getChatResponse(List<ModelforMyBot> allmessages) async {
-    print(jsonEncode(allmessages.map((v) => v.toJson()).toList()));
+    final messagesWithSystem = [
+      {'role': 'system', 'content': _systemPrompt},
+      ...allmessages.map((v) => v.toJson()),
+    ];
+    print(jsonEncode(messagesWithSystem));
     final response = await http.post(
       Uri.parse(_baseUrl),
       headers: {
@@ -20,12 +35,8 @@ class ChatService {
       },
       body: jsonEncode({
         'model': 'gpt-3.5-turbo',
-        'messages': allmessages.map((v) => v.toJson()).toList(),
-        // [
-        //   {'role': 'system', 'content': 'You are a helpful assistant.'},
-        //   {'role': 'user', 'content': prompt},
-        // ],
-        'max_tokens': 1500, // Adjust this value as needed
+        'messages': messagesWithSystem,
+        'max_tokens': 400,
         'temperature': 0.7,
         'top_p': 1.0,
       }),

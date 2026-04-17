@@ -8,9 +8,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/colors.dart';
 import '../models/chat_model.dart';
@@ -2458,6 +2460,45 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     PopupMenuItem(
                       padding: EdgeInsets.zero,
                       child: ListTile(
+                        onTap: () {
+                          Navigator.pop(context);
+                          Future.delayed(const Duration(milliseconds: 250),
+                              () => _shareConversation());
+                        },
+                        leading: const Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Icon(
+                            Icons.ios_share,
+                            color: Colors.black,
+                          ),
+                        ),
+                        title: const Text(
+                          "Share Conversation",
+                        ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      padding: EdgeInsets.zero,
+                      child: ListTile(
+                        onTap: () async {
+                          Navigator.pop(context);
+                          _showClearChatWarningDialog(context);
+                        },
+                        leading: const Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Icon(
+                            Icons.refresh,
+                            color: Colors.black,
+                          ),
+                        ),
+                        title: const Text(
+                          "Clear Chat",
+                        ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      padding: EdgeInsets.zero,
+                      child: ListTile(
                         // tileColor: Colors.white,
                         onTap: () async {
                           reportIssueDialogue(context);
@@ -2607,6 +2648,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       onLongPress: () async {
                         await Clipboard.setData(
                             ClipboardData(text: user.message ?? ''));
+                        Fluttertoast.showToast(msg: "Copied to clipboard");
                       },
                       child: RecieveChatBubble(
                           message: user.messageType == "txt"
@@ -2626,9 +2668,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
     // {'role': 'system', 'content': 'You are a helpful assistant.'},
     //       {'role': 'user', 'content': prompt},
     for (var v in conversationModel) {
+      if (v.message == "loading") continue;
       allmessages.add(
         ModelforMyBot(
-          role: v.isSender ? "user" : "system",
+          role: v.isSender ? "user" : "assistant",
           content: v.message,
         ),
       );
@@ -2679,6 +2722,162 @@ class _ChattingScreenState extends State<ChattingScreen> {
       _controller.clear();
       setState(() {});
     }
+  }
+
+  void _showClearChatWarningDialog(BuildContext screencontext) {
+    showDialog(
+      context: screencontext,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 10,
+          backgroundColor: Colors.white,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.refresh,
+                  size: 50,
+                  color: Colors.orange,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Clear Chat',
+                  style: GoogleFonts.raleway(
+                    textStyle: const TextStyle(
+                      color: Color(0xff032553),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'This will permanently delete your entire conversation history. Continue?',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.raleway(
+                    textStyle: const TextStyle(
+                      color: Color(0xff032553),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: const BorderSide(color: Colors.orange),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await _clearChat();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        'Clear',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _shareConversation() async {
+    final messages = conversationModel
+        .where((m) => m.message != "loading" && (m.message?.isNotEmpty ?? false))
+        .toList();
+
+    if (messages.isEmpty ||
+        (messages.length == 1 && !(messages.first.isSender ?? false))) {
+      Fluttertoast.showToast(msg: "No conversation to share yet.");
+      return;
+    }
+
+    final dateStr = DateFormat('MMM d, y').format(DateTime.now());
+    final buffer = StringBuffer();
+    buffer.writeln('Disaster AIDvisor Conversation — $dateStr');
+    buffer.writeln();
+
+    for (final m in messages) {
+      final speaker = (m.isSender ?? false) ? 'You' : 'AIDvisor';
+      buffer.writeln('$speaker: ${m.message?.trim() ?? ''}');
+      buffer.writeln();
+    }
+
+    try {
+      final box = context.findRenderObject() as RenderBox?;
+      await Share.share(
+        buffer.toString().trim(),
+        subject: 'Disaster AIDvisor Conversation — $dateStr',
+        sharePositionOrigin:
+            box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+      );
+    } catch (e) {
+      print('Share failed: $e');
+      Fluttertoast.showToast(msg: "Unable to open share sheet: $e");
+    }
+  }
+
+  Future<void> _clearChat() async {
+    final currentUser =
+        FirebaseAuth.instance.currentUser?.email?.replaceAll('.', '') ?? '';
+    await chatref.child(currentUser).remove();
+    conversationModel.clear();
+    conversationModel.add(ConvModel(
+      isSender: false,
+      message:
+          "Hi, I'm BuildSOS's Disaster AIDvisor chatbot.  I can help you prepare for, respond to, or recover from disasters.  How can I help?",
+      messageType: "txt",
+    ));
+    if (mounted) setState(() {});
   }
 
   void _showDeleteWarningDialog(BuildContext screencontext) {

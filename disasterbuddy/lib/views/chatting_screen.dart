@@ -2274,6 +2274,30 @@ class _ChattingScreenState extends State<ChattingScreen> {
   final _controller = TextEditingController();
   var icon = Icons.mic_rounded;
   final _node = FocusNode();
+  String? _firstName;
+  String? _zipCode;
+
+  static const List<_SuggestionChip> _suggestionChips = [
+    _SuggestionChip(
+      label: 'Preparing for Hurricane Season',
+      subtitle: 'Plans, supplies, and priorities',
+      prompt: 'Walk me through preparing for hurricane season.',
+    ),
+    _SuggestionChip(
+      label: 'Response During an Event',
+      subtitle: 'What to do as conditions develop',
+      prompt: 'A major storm is heading my way. What should I do right now?',
+    ),
+    _SuggestionChip(
+      label: 'After an Incident',
+      subtitle: 'Recovery, claims, and next steps',
+      prompt: 'My home was damaged. How do I start recovering and filing claims?',
+    ),
+  ];
+
+  bool get _showSuggestionChips =>
+      conversationModel.length == 1 &&
+      !(conversationModel.first.isSender ?? false);
 
   @override
   void initState() {
@@ -2281,37 +2305,53 @@ class _ChattingScreenState extends State<ChattingScreen> {
     super.initState();
   }
 
-  callback() async {
-    String? currentUser =
-        FirebaseAuth.instance.currentUser?.email?.replaceAll('.', '');
-    final chatData = await chatref.child(currentUser ?? '').get();
-    conversationModel.clear();
-
-    if (chatData.exists) {
-      for (var v in chatData.children) {
-        final mapData = v.value as Map<dynamic, dynamic>;
-
-        ConvModel dt = ConvModel(
-            isSender: mapData['isSender'],
-            message: mapData["message"],
-            messageType: mapData['messagetype'] ?? "txt",
-            timestamp: mapData['timestamp']);
-        conversationModel.add(dt);
-      }
-      if (mounted) {
-        setState(() {});
-      }
-    } else {
-      conversationModel.add(ConvModel(
-        isSender: false,
-        message:
-            "Hi, I'm BuildSOS's Disaster AIDvisor chatbot.  I can help you prepare for, respond to, or recover from disasters.  How can I help?",
-        messageType: "txt",
-      ));
-      if (mounted) {
-        setState(() {});
-      }
+  Future<void> _loadUserProfile() async {
+    try {
+      final email = FirebaseAuth.instance.currentUser?.email;
+      if (email == null) return;
+      final snap = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+      if (snap.docs.isEmpty) return;
+      final data = snap.docs.first.data();
+      _firstName = data['firstName']?.toString();
+      _zipCode = data['zipCode']?.toString();
+    } catch (_) {
+      // Silent fail — fall back to generic greeting.
     }
+  }
+
+  String _buildGreeting() {
+    final name = (_firstName?.trim().isNotEmpty ?? false) ? _firstName!.trim() : null;
+    final hour = DateTime.now().hour;
+    final salutation = hour < 12
+        ? 'Good morning'
+        : (hour < 17 ? 'Good afternoon' : 'Good evening');
+    if (name != null) {
+      return "$salutation, $name. I'm at your service for preparation, response, and recovery. How may I help today?";
+    }
+    return "$salutation. I'm your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?";
+  }
+
+  String _buildBriefing() {
+    final dateStr = DateFormat('EEEE, MMMM d').format(DateTime.now());
+    final zip = (_zipCode?.trim().isNotEmpty ?? false) ? _zipCode!.trim() : null;
+    final area = zip != null ? 'ZIP $zip' : 'your area';
+    return "$dateStr  ·  No active threats in $area. Hurricane season begins June 1 — your readiness profile is up to date.";
+  }
+
+  callback() async {
+    await _loadUserProfile();
+    conversationModel.clear();
+    conversationModel.add(ConvModel(
+      isSender: false,
+      message: _buildGreeting(),
+      messageType: "txt",
+    ));
+    if (mounted) setState(() {});
+
     FirebaseFirestore.instance.collection('key').snapshots().listen((v) {
       _chatService.setApiKey(v.docs.first.data()['key']);
     });
@@ -2399,13 +2439,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
           ),
         ),
         centerTitle: true,
-        title: const Text(
-          "DISASTER AIDVISOR",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-            letterSpacing: 1.2,
+        title: Text(
+          "Disaster AIDvisor",
+          style: GoogleFonts.playfairDisplay(
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
+              letterSpacing: 0.3,
+            ),
           ),
         ),
         actions: [
@@ -2534,6 +2576,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       body: Column(
         children: [
           buildChat(),
+          if (_showSuggestionChips) _buildSuggestionChipsRow(),
           Container(
             padding: EdgeInsets.fromLTRB(
                 20, 10, 20, MediaQuery.of(context).padding.bottom + 16),
@@ -2554,64 +2597,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
               CustomRoundButton(
                 onTap: () async {
                   if (_controller.text.isNotEmpty) {
-                    String date =
-                        DateTime.now().millisecondsSinceEpoch.toString();
-                    // chatref?.child(date).set({
-                    //   "message": _controller.text,
-                    //   "email": FirebaseAuth.instance.currentUser?.email
-                    //           ?.replaceAll('.', '') ??
-                    //       '',
-                    //   "messagetype": "txt",
-                    // });
-                    String txt = _controller.text;
-                    chatref
-                        .child(FirebaseAuth.instance.currentUser?.email
-                                ?.replaceAll('.', '') ??
-                            '')
-                        .child(date)
-                        .set({
-                      "message": txt,
-                      "isSender": true,
-                      "messagetype": "txt",
-                      "timestamp": date,
-                    });
-                    conversationModel.add(ConvModel(
-                        isSender: true,
-                        message: txt,
-                        messageType: "txt",
-                        timestamp: DateTime.now().toString()));
-                    conversationModel.add(ConvModel(
-                        isSender: false,
-                        message: 'loading',
-                        messageType: "txt",
-                        timestamp: DateTime.now().toString()));
+                    final txt = _controller.text;
                     _controller.clear();
-                    // conversationModel = conversationModel.reversed.toList();
-                    setState(() {});
-                    Future.delayed(const Duration(seconds: 2)).then((v) {
-                      int? indexWhere = userInput.indexWhere((test) => test
-                          .toLowerCase()
-                          .replaceAll("'", '')
-                          .replaceAll("?", '')
-                          .contains(txt
-                              .toLowerCase()
-                              .replaceAll("'", '')
-                              .replaceAll("?", '')));
-                      if (indexWhere != -1) {
-                        conversationModel
-                            .removeWhere((test) => test.message == "loading");
-
-                        conversationModel.add(ConvModel(
-                            isSender: false,
-                            message: responseInput[indexWhere],
-                            messageType: "txt",
-                            timestamp: DateTime.now().toString()));
-                      } else {
-                        sendMessage(txt: txt);
-                      }
-
-                      setState(() {});
-                    });
+                    await _submitUserMessage(txt);
                   }
                 },
                 icon: Icons.send_rounded,
@@ -2627,6 +2615,84 @@ class _ChattingScreenState extends State<ChattingScreen> {
   }
 
   buildChat() {
+    if (_showSuggestionChips) {
+      return Expanded(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 28),
+              Center(
+                child: Image.asset(
+                  "assets/images/newimage.jpeg",
+                  height: 72,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Center(
+                child: Text(
+                  'Prepare · Respond · Recover',
+                  style: GoogleFonts.playfairDisplay(
+                    textStyle: const TextStyle(
+                      color: Color(0xff1B2E4B),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xffFAF7F2),
+                  borderRadius: BorderRadius.circular(4),
+                  border: const Border(
+                    left: BorderSide(color: Color(0xffE8960C), width: 3),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "TODAY'S BRIEFING",
+                      style: GoogleFonts.raleway(
+                        textStyle: const TextStyle(
+                          color: Color(0xff888888),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _buildBriefing(),
+                      style: const TextStyle(
+                        color: Color(0xff1B2E4B),
+                        fontSize: 13,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              RecieveChatBubble(
+                message: conversationModel.first.message ?? '',
+                messagetype: 'txt',
+                isSender: false,
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      );
+    }
+
     final chats = conversationModel.reversed.toList();
     return Expanded(
         child: ListView.builder(
@@ -2641,8 +2707,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           ? (user.message ?? '')
                           : "Media Attached ",
                       messagetype: user.messageType ?? '',
-                      // timestamp: myFormatDateTime(DateTime.now().toUtc()),
-                      // tickStatus: TickStatus.seen,
                       isSender: true)
                   : GestureDetector(
                       onLongPress: () async {
@@ -2655,11 +2719,114 @@ class _ChattingScreenState extends State<ChattingScreen> {
                               ? (user.message ?? '')
                               : "Media Attached",
                           messagetype: user.messageType ?? '',
-                          // timestamp: myFormatDateTime(DateTime.now().toUtc()),
-                          // tickStatus: TickStatus.seen,
                           isSender: false),
                     );
             }));
+  }
+
+  Future<void> _submitUserMessage(String txt) async {
+    final trimmed = txt.trim();
+    if (trimmed.isEmpty) return;
+
+    final date = DateTime.now().millisecondsSinceEpoch.toString();
+    final emailKey =
+        FirebaseAuth.instance.currentUser?.email?.replaceAll('.', '') ?? '';
+
+    chatref.child(emailKey).child(date).set({
+      "message": trimmed,
+      "isSender": true,
+      "messagetype": "txt",
+      "timestamp": date,
+    });
+
+    conversationModel.add(ConvModel(
+        isSender: true,
+        message: trimmed,
+        messageType: "txt",
+        timestamp: DateTime.now().toString()));
+    conversationModel.add(ConvModel(
+        isSender: false,
+        message: 'loading',
+        messageType: "txt",
+        timestamp: DateTime.now().toString()));
+    setState(() {});
+
+    Future.delayed(const Duration(seconds: 2)).then((_) {
+      final idx = userInput.indexWhere((test) => test
+          .toLowerCase()
+          .replaceAll("'", '')
+          .replaceAll("?", '')
+          .contains(trimmed
+              .toLowerCase()
+              .replaceAll("'", '')
+              .replaceAll("?", '')));
+      if (idx != -1) {
+        conversationModel.removeWhere((m) => m.message == "loading");
+        conversationModel.add(ConvModel(
+            isSender: false,
+            message: responseInput[idx],
+            messageType: "txt",
+            timestamp: DateTime.now().toString()));
+      } else {
+        sendMessage(txt: trimmed);
+      }
+      setState(() {});
+    });
+  }
+
+  Widget _buildSuggestionChipsRow() {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _suggestionChips
+            .map((c) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(6),
+                    onTap: () => _submitUserMessage(c.prompt),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                            color: const Color(0xffDDDDDD), width: 1),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            c.label,
+                            style: GoogleFonts.playfairDisplay(
+                              textStyle: const TextStyle(
+                                fontSize: 16,
+                                color: Color(0xff1B2E4B),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            c.subtitle,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xff888888),
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ))
+            .toList(),
+      ),
+    );
   }
 
   sendMessage({txt}) async {
@@ -2873,8 +3040,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
     conversationModel.clear();
     conversationModel.add(ConvModel(
       isSender: false,
-      message:
-          "Hi, I'm BuildSOS's Disaster AIDvisor chatbot.  I can help you prepare for, respond to, or recover from disasters.  How can I help?",
+      message: _buildGreeting(),
       messageType: "txt",
     ));
     if (mounted) setState(() {});
@@ -3249,4 +3415,16 @@ class ModelforMyBot {
     data['content'] = content;
     return data;
   }
+}
+
+class _SuggestionChip {
+  final String label;
+  final String subtitle;
+  final String prompt;
+
+  const _SuggestionChip({
+    required this.label,
+    required this.subtitle,
+    required this.prompt,
+  });
 }

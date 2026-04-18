@@ -91,7 +91,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   // Heading
                   Text(
                     'Check Your Email',
-                    style: GoogleFonts.raleway(
+                    style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
                         color: _darkNavy,
                         fontWeight: FontWeight.bold,
@@ -105,7 +105,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   Text(
                     'We have sent a verification email to',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.raleway(
+                    style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
                         color: Color(0xff666666),
                         fontSize: 15,
@@ -116,7 +116,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   Text(
                     auth.currentUser?.email ?? '',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.raleway(
+                    style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
                         color: _darkNavy,
                         fontWeight: FontWeight.bold,
@@ -139,7 +139,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
                   Text(
                     'Verifying email...',
-                    style: GoogleFonts.raleway(
+                    style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
                         color: Color(0xff999999),
                         fontWeight: FontWeight.w600,
@@ -164,7 +164,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         Expanded(
                           child: Text(
                             'Please check your spam folder in case you cannot find the verification email.',
-                            style: GoogleFonts.raleway(
+                            style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
                                 color: Color(0xff666666),
                                 fontSize: 13,
@@ -203,7 +203,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     },
                     child: Text(
                       'Resend Email',
-                      style: GoogleFonts.raleway(
+                      style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: _orangeAccent,
                           fontWeight: FontWeight.bold,

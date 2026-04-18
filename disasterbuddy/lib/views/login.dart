@@ -76,7 +76,7 @@ class _LoginState extends State<Login> {
                     Center(
                       child: Text(
                         'Prepare. Respond. Recover.',
-                        style: GoogleFonts.raleway(
+                        style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             color: darkNavy,
                             fontWeight: FontWeight.w600,
@@ -187,7 +187,7 @@ class _LoginState extends State<Login> {
                         },
                         child: Text(
                           'Forgot Password?',
-                          style: GoogleFonts.raleway(
+                          style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                               color: linkBlue,
                               fontWeight: FontWeight.w600,
@@ -213,7 +213,7 @@ class _LoginState extends State<Login> {
                       onPressed: _handleSignIn,
                       child: Text(
                         'Sign In',
-                        style: GoogleFonts.raleway(
+                        style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
@@ -228,7 +228,7 @@ class _LoginState extends State<Login> {
                       child: Text.rich(
                         TextSpan(
                           text: "Don't have an account? ",
-                          style: GoogleFonts.raleway(
+                          style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                               color: Color(0xff666666),
                               fontSize: 15,
@@ -237,7 +237,7 @@ class _LoginState extends State<Login> {
                           children: [
                             TextSpan(
                               text: "Sign Up",
-                              style: GoogleFonts.raleway(
+                              style: GoogleFonts.poppins(
                                 textStyle: const TextStyle(
                                   color: linkBlue,
                                   fontWeight: FontWeight.bold,
@@ -263,7 +263,7 @@ class _LoginState extends State<Login> {
                       child: Text(
                         "Disaster AIDvisor is for general informational purposes only and is not a substitute for emergency services — if you are in immediate danger, please call 911.",
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.raleway(
+                        style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             color: Color(0xff999999),
                             fontSize: 11,

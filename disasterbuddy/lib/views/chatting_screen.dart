@@ -16,6 +16,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/colors.dart';
 import '../models/chat_model.dart';
+import '../services/briefing_service.dart';
 import '../services/chat_service.dart';
 import '../widgets/chat_box.dart';
 import '../widgets/custom_round_button.dart';
@@ -2276,6 +2277,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
   final _node = FocusNode();
   String? _firstName;
   String? _zipCode;
+  final BriefingService _briefingService = BriefingService();
+  List<String>? _activeAlerts;
+  bool _loadingAlerts = false;
 
   static const List<_SuggestionChip> _suggestionChips = [
     _SuggestionChip(
@@ -2339,7 +2343,37 @@ class _ChattingScreenState extends State<ChattingScreen> {
     final dateStr = DateFormat('EEEE, MMMM d').format(DateTime.now());
     final zip = (_zipCode?.trim().isNotEmpty ?? false) ? _zipCode!.trim() : null;
     final area = zip != null ? 'ZIP $zip' : 'your area';
-    return "$dateStr  ·  No active threats in $area. Hurricane season begins June 1 — your readiness profile is up to date.";
+
+    if (_loadingAlerts) {
+      return "$dateStr  ·  Checking current conditions for $area…";
+    }
+
+    final alerts = _activeAlerts;
+    if (alerts == null) {
+      return "$dateStr  ·  Live conditions unavailable. Always verify with local authorities during active events.";
+    }
+
+    if (alerts.isEmpty) {
+      return "$dateStr  ·  No active NWS alerts for $area.";
+    }
+
+    final unique = alerts.toSet().toList();
+    final summary = unique.length == 1
+        ? unique.first
+        : '${unique.length} active alerts (${unique.take(2).join(", ")}${unique.length > 2 ? "…" : ""})';
+    return "$dateStr  ·  $summary in effect for $area. Follow local official guidance.";
+  }
+
+  Future<void> _loadBriefing() async {
+    final zip = _zipCode?.trim();
+    if (zip == null || zip.isEmpty) return;
+    if (mounted) setState(() => _loadingAlerts = true);
+    final alerts = await _briefingService.fetchActiveAlerts(zip);
+    if (!mounted) return;
+    setState(() {
+      _activeAlerts = alerts;
+      _loadingAlerts = false;
+    });
   }
 
   callback() async {
@@ -2351,6 +2385,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
       messageType: "txt",
     ));
     if (mounted) setState(() {});
+
+    _loadBriefing();
 
     FirebaseFirestore.instance.collection('key').snapshots().listen((v) {
       _chatService.setApiKey(v.docs.first.data()['key']);
@@ -2441,7 +2477,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         centerTitle: true,
         title: Text(
           "Disaster AIDvisor",
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.poppins(
             textStyle: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w600,
@@ -2451,6 +2487,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
           ),
         ),
         actions: [
+          if (!_showSuggestionChips)
+            IconButton(
+              tooltip: 'Return to home',
+              icon: const Icon(Icons.home_outlined, color: Colors.white),
+              onPressed: () {
+                conversationModel.clear();
+                conversationModel.add(ConvModel(
+                  isSender: false,
+                  message: _buildGreeting(),
+                  messageType: "txt",
+                ));
+                setState(() {});
+              },
+            ),
           GestureDetector(
             onTap: () {
               showMenu(
@@ -2632,7 +2682,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
               Center(
                 child: Text(
                   'Prepare · Respond · Recover',
-                  style: GoogleFonts.playfairDisplay(
+                  style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                       color: Color(0xff1B2E4B),
                       fontWeight: FontWeight.w500,
@@ -2659,7 +2709,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   children: [
                     Text(
                       "TODAY'S BRIEFING",
-                      style: GoogleFonts.raleway(
+                      style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: Color(0xff888888),
                           fontSize: 10,
@@ -2795,14 +2845,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                            color: const Color(0xffDDDDDD), width: 1),
+                            color: const Color(0xffE8960C), width: 1),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             c.label,
-                            style: GoogleFonts.playfairDisplay(
+                            style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
                                 fontSize: 16,
                                 color: Color(0xff1B2E4B),
@@ -2918,7 +2968,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'Clear Chat',
-                  style: GoogleFonts.raleway(
+                  style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                       color: Color(0xff032553),
                       fontWeight: FontWeight.bold,
@@ -2930,7 +2980,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 Text(
                   'This will permanently delete your entire conversation history. Continue?',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.raleway(
+                  style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                       color: Color(0xff032553),
                       fontSize: 16,
@@ -3073,7 +3123,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'Delete Confirmation',
-                  style: GoogleFonts.raleway(
+                  style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                       color: Color(0xff032553),
                       fontWeight: FontWeight.bold,
@@ -3085,7 +3135,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 Text(
                   'Are you sure you want to Delete Account?',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.raleway(
+                  style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                       color: Color(0xff032553),
                       fontSize: 16,
@@ -3308,7 +3358,7 @@ void _showLogoutWarningDialog(BuildContext screencontext) {
               const SizedBox(height: 16),
               Text(
                 'Logout Confirmation',
-                style: GoogleFonts.raleway(
+                style: GoogleFonts.poppins(
                   textStyle: const TextStyle(
                     color: Color(0xff032553),
                     fontWeight: FontWeight.bold,
@@ -3320,7 +3370,7 @@ void _showLogoutWarningDialog(BuildContext screencontext) {
               Text(
                 'Are you sure you want to log out?',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.raleway(
+                style: GoogleFonts.poppins(
                   textStyle: const TextStyle(
                     color: Color(0xff032553),
                     fontSize: 16,

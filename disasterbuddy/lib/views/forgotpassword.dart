@@ -63,7 +63,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     Center(
                       child: Text(
                         'Reset Password',
-                        style: GoogleFonts.raleway(
+                        style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             color: _darkNavy,
                             fontWeight: FontWeight.bold,
@@ -79,7 +79,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       child: Text(
                         'Enter your email address and we\'ll send you a link to reset your password.',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.raleway(
+                        style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             color: Color(0xff666666),
                             fontSize: 15,
@@ -146,7 +146,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       },
                       child: Text(
                         'Send Reset Link',
-                        style: GoogleFonts.raleway(
+                        style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
@@ -162,7 +162,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         onTap: () => Navigator.pop(context),
                         child: Text(
                           'Back to Sign In',
-                          style: GoogleFonts.raleway(
+                          style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                               color: Color(0xff3B7DD8),
                               fontWeight: FontWeight.w600,

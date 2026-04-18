@@ -113,7 +113,7 @@ class _SignupState extends State<Signup> {
                   Center(
                     child: Text(
                       'Create Your Account',
-                      style: GoogleFonts.raleway(
+                      style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: _darkNavy,
                           fontWeight: FontWeight.bold,
@@ -258,7 +258,7 @@ class _SignupState extends State<Signup> {
                         child: Text.rich(
                           TextSpan(
                             text: "I agree to the ",
-                            style: GoogleFonts.raleway(
+                            style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
                                 color: Color(0xff666666),
                                 fontSize: 14,
@@ -267,7 +267,7 @@ class _SignupState extends State<Signup> {
                             children: [
                               TextSpan(
                                 text: "Privacy Policy",
-                                style: GoogleFonts.raleway(
+                                style: GoogleFonts.poppins(
                                   textStyle: const TextStyle(
                                     color: _orangeBorder,
                                     fontWeight: FontWeight.bold,
@@ -318,7 +318,7 @@ class _SignupState extends State<Signup> {
                       Expanded(
                         child: Text(
                           'I understand that Disaster AIDvisor is for general informational purposes only and is not a substitute for emergency services. If you are in immediate danger, please call 911.',
-                          style: GoogleFonts.raleway(
+                          style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                               color: Color(0xff666666),
                               fontSize: 13,
@@ -345,7 +345,7 @@ class _SignupState extends State<Signup> {
                     onPressed: _allFieldsFilled ? _handleSignUp : null,
                     child: Text(
                       'Sign Up',
-                      style: GoogleFonts.raleway(
+                      style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
@@ -360,7 +360,7 @@ class _SignupState extends State<Signup> {
                     child: Text.rich(
                       TextSpan(
                         text: "Already have an account? ",
-                        style: GoogleFonts.raleway(
+                        style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             color: Color(0xff666666),
                             fontSize: 15,
@@ -369,7 +369,7 @@ class _SignupState extends State<Signup> {
                         children: [
                           TextSpan(
                             text: "Sign In",
-                            style: GoogleFonts.raleway(
+                            style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
                                 color: _linkBlue,
                                 fontWeight: FontWeight.bold,
@@ -502,7 +502,7 @@ class _PrivacyPolicyScreen extends StatelessWidget {
         ),
         title: Text(
           'Privacy Policy',
-          style: GoogleFonts.raleway(
+          style: GoogleFonts.poppins(
             textStyle: const TextStyle(
               color: Color(0xff1B2E4B),
               fontWeight: FontWeight.bold,
@@ -557,7 +557,7 @@ For questions regarding these Terms or your use of the Service, please contact: 
 
 13. Dispute Resolution and Binding Arbitration
 PLEASE READ THIS SECTION CAREFULLY. IT AFFECTS YOUR LEGAL RIGHTS. You agree that any dispute, controversy, or claim arising out of or relating to your use of Disaster AIDvisor or these Terms shall be exclusively resolved through final and binding arbitration, rather than in court. Arbitration shall be conducted in accordance with the Commercial Arbitration Rules of the American Arbitration Association (AAA). The arbitration will be held in New Orleans, Louisiana, unless the parties agree otherwise.''',
-          style: GoogleFonts.raleway(
+          style: GoogleFonts.poppins(
             textStyle: const TextStyle(
               color: Color(0xff333333),
               fontSize: 14,

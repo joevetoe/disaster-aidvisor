@@ -1,0 +1,96 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Disaster AIDvisor",
+  "tagline": "Prepare · Respond · Recover",
+
+  "greetingMorningNamed": "Good morning, {name}. I'm at your service for preparation, response, and recovery. How may I help today?",
+  "@greetingMorningNamed": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "greetingAfternoonNamed": "Good afternoon, {name}. I'm at your service for preparation, response, and recovery. How may I help today?",
+  "@greetingAfternoonNamed": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "greetingEveningNamed": "Good evening, {name}. I'm at your service for preparation, response, and recovery. How may I help today?",
+  "@greetingEveningNamed": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "greetingMorningAnon": "Good morning. I'm your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?",
+  "greetingAfternoonAnon": "Good afternoon. I'm your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?",
+  "greetingEveningAnon": "Good evening. I'm your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?",
+
+  "briefingLabel": "TODAY'S BRIEFING",
+  "briefingLoading": "{date}  ·  Checking current conditions for {area}…",
+  "@briefingLoading": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "area": {"type": "String"}
+    }
+  },
+  "briefingUnavailable": "{date}  ·  Live conditions unavailable. Always verify with local authorities during active events.",
+  "@briefingUnavailable": {
+    "placeholders": {"date": {"type": "String"}}
+  },
+  "briefingNoAlerts": "{date}  ·  No active NWS alerts for {area}.",
+  "@briefingNoAlerts": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "area": {"type": "String"}
+    }
+  },
+  "briefingAlertsSummary": "{date}  ·  {summary} in effect for {area}. Follow local official guidance.",
+  "@briefingAlertsSummary": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "summary": {"type": "String"},
+      "area": {"type": "String"}
+    }
+  },
+  "briefingAreaZip": "ZIP {zip}",
+  "@briefingAreaZip": {
+    "placeholders": {"zip": {"type": "String"}}
+  },
+  "briefingAreaGeneric": "your area",
+
+  "topicPrepareTitle": "Preparing for Hurricane Season",
+  "topicPrepareSubtitle": "Plans, supplies, and priorities",
+  "topicPreparePrompt": "Walk me through preparing for hurricane season.",
+  "topicRespondTitle": "Response During an Event",
+  "topicRespondSubtitle": "What to do as conditions develop",
+  "topicRespondPrompt": "A major storm is heading my way. What should I do right now?",
+  "topicRecoverTitle": "After an Incident",
+  "topicRecoverSubtitle": "Recovery, claims, and next steps",
+  "topicRecoverPrompt": "My home was damaged. How do I start recovering and filing claims?",
+
+  "chatInputPlaceholder": "Type a message…",
+  "copiedToClipboard": "Copied to clipboard",
+  "noConversationToShare": "No conversation to share yet.",
+  "shareSubject": "Disaster AIDvisor Conversation — {date}",
+  "@shareSubject": {
+    "placeholders": {"date": {"type": "String"}}
+  },
+  "shareHeader": "Disaster AIDvisor Conversation — {date}",
+  "@shareHeader": {
+    "placeholders": {"date": {"type": "String"}}
+  },
+  "shareSpeakerYou": "You",
+  "shareSpeakerBot": "AIDvisor",
+
+  "menuShareConversation": "Share Conversation",
+  "menuClearChat": "Clear Chat",
+  "menuReportIssue": "Report an Issue",
+  "menuLogout": "Logout",
+  "menuDeleteAccount": "Delete Account",
+  "menuTermsConditions": "Terms & Conditions",
+  "menuLanguage": "Language",
+  "homeTooltip": "Return to home",
+
+  "clearChatTitle": "Clear Chat",
+  "clearChatBody": "This will permanently delete your entire conversation history. Continue?",
+  "cancel": "Cancel",
+  "clear": "Clear",
+
+  "languageEnglish": "English",
+  "languageSpanish": "Español"
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/generated/app_localizations.dart';
 
 class ChatBox extends StatelessWidget {
   const ChatBox({
@@ -38,15 +39,15 @@ class ChatBox extends StatelessWidget {
                   fontSize: 15,
                   color: Color(0xff1a1a1a),
                 ),
-                decoration: const InputDecoration(
-                  hintText: 'Type a message...',
-                  hintStyle: TextStyle(
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.chatInputPlaceholder,
+                  hintStyle: const TextStyle(
                     color: Color(0xff999999),
                     fontSize: 15,
                   ),
                   border: InputBorder.none,
                   isDense: true,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 ),
               ),
             ),

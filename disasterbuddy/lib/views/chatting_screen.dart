@@ -16,8 +16,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/colors.dart';
 import '../models/chat_model.dart';
+import '../l10n/generated/app_localizations.dart';
 import '../services/briefing_service.dart';
 import '../services/chat_service.dart';
+import '../services/locale_controller.dart';
 import '../widgets/chat_box.dart';
 import '../widgets/custom_round_button.dart';
 import '../widgets/send_recieve_bubble.dart';
@@ -2280,24 +2282,25 @@ class _ChattingScreenState extends State<ChattingScreen> {
   final BriefingService _briefingService = BriefingService();
   List<String>? _activeAlerts;
   bool _loadingAlerts = false;
+  bool _greetingSeeded = false;
 
-  static const List<_SuggestionChip> _suggestionChips = [
-    _SuggestionChip(
-      label: 'Preparing for Hurricane Season',
-      subtitle: 'Plans, supplies, and priorities',
-      prompt: 'Walk me through preparing for hurricane season.',
-    ),
-    _SuggestionChip(
-      label: 'Response During an Event',
-      subtitle: 'What to do as conditions develop',
-      prompt: 'A major storm is heading my way. What should I do right now?',
-    ),
-    _SuggestionChip(
-      label: 'After an Incident',
-      subtitle: 'Recovery, claims, and next steps',
-      prompt: 'My home was damaged. How do I start recovering and filing claims?',
-    ),
-  ];
+  List<_SuggestionChip> _suggestionChipsFor(AppLocalizations t) => [
+        _SuggestionChip(
+          label: t.topicPrepareTitle,
+          subtitle: t.topicPrepareSubtitle,
+          prompt: t.topicPreparePrompt,
+        ),
+        _SuggestionChip(
+          label: t.topicRespondTitle,
+          subtitle: t.topicRespondSubtitle,
+          prompt: t.topicRespondPrompt,
+        ),
+        _SuggestionChip(
+          label: t.topicRecoverTitle,
+          subtitle: t.topicRecoverSubtitle,
+          prompt: t.topicRecoverPrompt,
+        ),
+      ];
 
   bool get _showSuggestionChips =>
       conversationModel.length == 1 &&
@@ -2327,41 +2330,36 @@ class _ChattingScreenState extends State<ChattingScreen> {
     }
   }
 
-  String _buildGreeting() {
+  String _buildGreeting(AppLocalizations t) {
     final name = (_firstName?.trim().isNotEmpty ?? false) ? _firstName!.trim() : null;
     final hour = DateTime.now().hour;
-    final salutation = hour < 12
-        ? 'Good morning'
-        : (hour < 17 ? 'Good afternoon' : 'Good evening');
     if (name != null) {
-      return "$salutation, $name. I'm at your service for preparation, response, and recovery. How may I help today?";
+      if (hour < 12) return t.greetingMorningNamed(name);
+      if (hour < 17) return t.greetingAfternoonNamed(name);
+      return t.greetingEveningNamed(name);
     }
-    return "$salutation. I'm your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?";
+    if (hour < 12) return t.greetingMorningAnon;
+    if (hour < 17) return t.greetingAfternoonAnon;
+    return t.greetingEveningAnon;
   }
 
-  String _buildBriefing() {
-    final dateStr = DateFormat('EEEE, MMMM d').format(DateTime.now());
+  String _buildBriefing(AppLocalizations t) {
+    final locale = Localizations.localeOf(context).languageCode;
+    final dateStr = DateFormat('EEEE, MMMM d', locale).format(DateTime.now());
     final zip = (_zipCode?.trim().isNotEmpty ?? false) ? _zipCode!.trim() : null;
-    final area = zip != null ? 'ZIP $zip' : 'your area';
+    final area = zip != null ? t.briefingAreaZip(zip) : t.briefingAreaGeneric;
 
-    if (_loadingAlerts) {
-      return "$dateStr  ·  Checking current conditions for $area…";
-    }
+    if (_loadingAlerts) return t.briefingLoading(dateStr, area);
 
     final alerts = _activeAlerts;
-    if (alerts == null) {
-      return "$dateStr  ·  Live conditions unavailable. Always verify with local authorities during active events.";
-    }
-
-    if (alerts.isEmpty) {
-      return "$dateStr  ·  No active NWS alerts for $area.";
-    }
+    if (alerts == null) return t.briefingUnavailable(dateStr);
+    if (alerts.isEmpty) return t.briefingNoAlerts(dateStr, area);
 
     final unique = alerts.toSet().toList();
     final summary = unique.length == 1
         ? unique.first
-        : '${unique.length} active alerts (${unique.take(2).join(", ")}${unique.length > 2 ? "…" : ""})';
-    return "$dateStr  ·  $summary in effect for $area. Follow local official guidance.";
+        : '${unique.length} (${unique.take(2).join(", ")}${unique.length > 2 ? "…" : ""})';
+    return t.briefingAlertsSummary(dateStr, summary, area);
   }
 
   Future<void> _loadBriefing() async {
@@ -2378,19 +2376,37 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   callback() async {
     await _loadUserProfile();
-    conversationModel.clear();
-    conversationModel.add(ConvModel(
-      isSender: false,
-      message: _buildGreeting(),
-      messageType: "txt",
-    ));
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    setState(() {});
 
     _loadBriefing();
 
     FirebaseFirestore.instance.collection('key').snapshots().listen((v) {
       _chatService.setApiKey(v.docs.first.data()['key']);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final t = AppLocalizations.of(context)!;
+    if (!_greetingSeeded) {
+      _greetingSeeded = true;
+      conversationModel.clear();
+      conversationModel.add(ConvModel(
+        isSender: false,
+        message: _buildGreeting(t),
+        messageType: "txt",
+      ));
+    } else if (conversationModel.length == 1 &&
+        !(conversationModel.first.isSender ?? false)) {
+      // Fresh state — keep greeting in sync with current locale.
+      conversationModel[0] = ConvModel(
+        isSender: false,
+        message: _buildGreeting(t),
+        messageType: conversationModel.first.messageType,
+      );
+    }
   }
 
   @override
@@ -2421,8 +2437,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           color: Colors.black,
                         ),
                       ),
-                      title: const Text(
-                        "Terms & Conditions",
+                      title: Text(
+                        AppLocalizations.of(context)!.menuTermsConditions,
                       ),
                     ),
                   ),
@@ -2488,19 +2504,22 @@ class _ChattingScreenState extends State<ChattingScreen> {
         ),
         actions: [
           if (!_showSuggestionChips)
-            IconButton(
-              tooltip: 'Return to home',
-              icon: const Icon(Icons.home_outlined, color: Colors.white),
-              onPressed: () {
-                conversationModel.clear();
-                conversationModel.add(ConvModel(
-                  isSender: false,
-                  message: _buildGreeting(),
-                  messageType: "txt",
-                ));
-                setState(() {});
-              },
-            ),
+            Builder(builder: (ctx) {
+              final t = AppLocalizations.of(ctx)!;
+              return IconButton(
+                tooltip: t.homeTooltip,
+                icon: const Icon(Icons.home_outlined, color: Colors.white),
+                onPressed: () {
+                  conversationModel.clear();
+                  conversationModel.add(ConvModel(
+                    isSender: false,
+                    message: _buildGreeting(t),
+                    messageType: "txt",
+                  ));
+                  setState(() {});
+                },
+              );
+            }),
           GestureDetector(
             onTap: () {
               showMenu(
@@ -2524,8 +2543,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             color: Colors.black,
                           ),
                         ),
-                        title: const Text(
-                          "Logout",
+                        title: Text(
+                          AppLocalizations.of(context)!.menuLogout,
                         ),
                       ),
                     ),
@@ -2544,8 +2563,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             color: Colors.black,
                           ),
                         ),
-                        title: const Text(
-                          "Delete Account",
+                        title: Text(
+                          AppLocalizations.of(context)!.menuDeleteAccount,
                         ),
                       ),
                     ),
@@ -2564,8 +2583,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             color: Colors.black,
                           ),
                         ),
-                        title: const Text(
-                          "Share Conversation",
+                        title: Text(
+                          AppLocalizations.of(context)!.menuShareConversation,
                         ),
                       ),
                     ),
@@ -2583,8 +2602,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             color: Colors.black,
                           ),
                         ),
-                        title: const Text(
-                          "Clear Chat",
+                        title: Text(
+                          AppLocalizations.of(context)!.menuClearChat,
                         ),
                       ),
                     ),
@@ -2603,8 +2622,27 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             color: Colors.black,
                           ),
                         ),
-                        title: const Text(
-                          "Report an Issue",
+                        title: Text(
+                          AppLocalizations.of(context)!.menuReportIssue,
+                        ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      padding: EdgeInsets.zero,
+                      child: ListTile(
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await _showLanguagePicker(context);
+                        },
+                        leading: const Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Icon(
+                            Icons.language,
+                            color: Colors.black,
+                          ),
+                        ),
+                        title: Text(
+                          AppLocalizations.of(context)!.menuLanguage,
                         ),
                       ),
                     ),
@@ -2665,6 +2703,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
   }
 
   buildChat() {
+    final t = AppLocalizations.of(context)!;
     if (_showSuggestionChips) {
       return Expanded(
         child: SingleChildScrollView(
@@ -2681,7 +2720,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
               const SizedBox(height: 12),
               Center(
                 child: Text(
-                  'Prepare · Respond · Recover',
+                  t.tagline,
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                       color: Color(0xff1B2E4B),
@@ -2708,7 +2747,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "TODAY'S BRIEFING",
+                      t.briefingLabel,
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: Color(0xff888888),
@@ -2720,7 +2759,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      _buildBriefing(),
+                      _buildBriefing(t),
                       style: const TextStyle(
                         color: Color(0xff1B2E4B),
                         fontSize: 13,
@@ -2762,7 +2801,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       onLongPress: () async {
                         await Clipboard.setData(
                             ClipboardData(text: user.message ?? ''));
-                        Fluttertoast.showToast(msg: "Copied to clipboard");
+                        Fluttertoast.showToast(msg: t.copiedToClipboard);
                       },
                       child: RecieveChatBubble(
                           message: user.messageType == "txt"
@@ -2825,13 +2864,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
   }
 
   Widget _buildSuggestionChipsRow() {
+    final t = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: _suggestionChips
+        children: _suggestionChipsFor(t)
             .map((c) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: InkWell(
@@ -2894,7 +2934,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
       );
     }
     try {
-      final aiResponse = await _chatService.getChatResponse(allmessages);
+      final langCode = Localizations.localeOf(context).languageCode;
+      final aiResponse = await _chatService
+          .getChatResponse(allmessages, languageCode: langCode);
       date = DateTime.now().millisecondsSinceEpoch.toString();
       _controller.clear();
 
@@ -2941,7 +2983,44 @@ class _ChattingScreenState extends State<ChattingScreen> {
     }
   }
 
+  Future<void> _showLanguagePicker(BuildContext screencontext) async {
+    final t = AppLocalizations.of(screencontext)!;
+    final current = LocaleController.instance.locale?.languageCode;
+    await showDialog(
+      context: screencontext,
+      builder: (context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(t.menuLanguage),
+          children: [
+            RadioListTile<String?>(
+              value: 'en',
+              groupValue: current,
+              title: Text(t.languageEnglish),
+              activeColor: const Color(0xffE8960C),
+              onChanged: (v) async {
+                await LocaleController.instance.setLocale(const Locale('en'));
+                if (context.mounted) Navigator.pop(context);
+              },
+            ),
+            RadioListTile<String?>(
+              value: 'es',
+              groupValue: current,
+              title: Text(t.languageSpanish),
+              activeColor: const Color(0xffE8960C),
+              onChanged: (v) async {
+                await LocaleController.instance.setLocale(const Locale('es'));
+                if (context.mounted) Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showClearChatWarningDialog(BuildContext screencontext) {
+    final t = AppLocalizations.of(screencontext)!;
     showDialog(
       context: screencontext,
       builder: (BuildContext context) {
@@ -2967,7 +3046,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Clear Chat',
+                  t.clearChatTitle,
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                       color: Color(0xff032553),
@@ -2978,7 +3057,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'This will permanently delete your entire conversation history. Continue?',
+                  t.clearChatBody,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
@@ -3006,9 +3085,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           vertical: 12,
                         ),
                       ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(
+                      child: Text(
+                        t.cancel,
+                        style: const TextStyle(
                           color: Colors.orange,
                           fontSize: 16,
                         ),
@@ -3029,9 +3108,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           vertical: 12,
                         ),
                       ),
-                      child: const Text(
-                        'Clear',
-                        style: TextStyle(
+                      child: Text(
+                        t.clear,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                         ),
@@ -3048,23 +3127,25 @@ class _ChattingScreenState extends State<ChattingScreen> {
   }
 
   Future<void> _shareConversation() async {
+    final t = AppLocalizations.of(context)!;
     final messages = conversationModel
         .where((m) => m.message != "loading" && (m.message?.isNotEmpty ?? false))
         .toList();
 
     if (messages.isEmpty ||
         (messages.length == 1 && !(messages.first.isSender ?? false))) {
-      Fluttertoast.showToast(msg: "No conversation to share yet.");
+      Fluttertoast.showToast(msg: t.noConversationToShare);
       return;
     }
 
-    final dateStr = DateFormat('MMM d, y').format(DateTime.now());
+    final locale = Localizations.localeOf(context).languageCode;
+    final dateStr = DateFormat('MMM d, y', locale).format(DateTime.now());
     final buffer = StringBuffer();
-    buffer.writeln('Disaster AIDvisor Conversation — $dateStr');
+    buffer.writeln(t.shareHeader(dateStr));
     buffer.writeln();
 
     for (final m in messages) {
-      final speaker = (m.isSender ?? false) ? 'You' : 'AIDvisor';
+      final speaker = (m.isSender ?? false) ? t.shareSpeakerYou : t.shareSpeakerBot;
       buffer.writeln('$speaker: ${m.message?.trim() ?? ''}');
       buffer.writeln();
     }
@@ -3073,24 +3154,24 @@ class _ChattingScreenState extends State<ChattingScreen> {
       final box = context.findRenderObject() as RenderBox?;
       await Share.share(
         buffer.toString().trim(),
-        subject: 'Disaster AIDvisor Conversation — $dateStr',
+        subject: t.shareSubject(dateStr),
         sharePositionOrigin:
             box != null ? box.localToGlobal(Offset.zero) & box.size : null,
       );
     } catch (e) {
       print('Share failed: $e');
-      Fluttertoast.showToast(msg: "Unable to open share sheet: $e");
     }
   }
 
   Future<void> _clearChat() async {
+    final t = AppLocalizations.of(context)!;
     final currentUser =
         FirebaseAuth.instance.currentUser?.email?.replaceAll('.', '') ?? '';
     await chatref.child(currentUser).remove();
     conversationModel.clear();
     conversationModel.add(ConvModel(
       isSender: false,
-      message: _buildGreeting(),
+      message: _buildGreeting(t),
       messageType: "txt",
     ));
     if (mounted) setState(() {});

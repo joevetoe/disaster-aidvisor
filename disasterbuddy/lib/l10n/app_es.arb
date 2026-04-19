@@ -1,0 +1,56 @@
+{
+  "@@locale": "es",
+
+  "appTitle": "Disaster AIDvisor",
+  "tagline": "Preparar · Responder · Recuperar",
+
+  "greetingMorningNamed": "Buenos días, {name}. Estoy a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?",
+  "greetingAfternoonNamed": "Buenas tardes, {name}. Estoy a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?",
+  "greetingEveningNamed": "Buenas noches, {name}. Estoy a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?",
+  "greetingMorningAnon": "Buenos días. Soy su Disaster AIDvisor — a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?",
+  "greetingAfternoonAnon": "Buenas tardes. Soy su Disaster AIDvisor — a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?",
+  "greetingEveningAnon": "Buenas noches. Soy su Disaster AIDvisor — a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?",
+
+  "briefingLabel": "RESUMEN DE HOY",
+  "briefingLoading": "{date}  ·  Consultando las condiciones actuales para {area}…",
+  "briefingUnavailable": "{date}  ·  Condiciones en tiempo real no disponibles. Siempre verifique con las autoridades locales durante eventos activos.",
+  "briefingNoAlerts": "{date}  ·  No hay alertas activas del NWS para {area}.",
+  "briefingAlertsSummary": "{date}  ·  {summary} vigente para {area}. Siga las instrucciones oficiales locales.",
+  "briefingAreaZip": "código postal {zip}",
+  "briefingAreaGeneric": "su zona",
+
+  "topicPrepareTitle": "Prepararse para la Temporada de Huracanes",
+  "topicPrepareSubtitle": "Planes, suministros y prioridades",
+  "topicPreparePrompt": "Explíqueme cómo prepararme para la temporada de huracanes.",
+  "topicRespondTitle": "Respuesta Durante un Evento",
+  "topicRespondSubtitle": "Qué hacer según se desarrollen las condiciones",
+  "topicRespondPrompt": "Una gran tormenta se dirige hacia mí. ¿Qué debo hacer ahora mismo?",
+  "topicRecoverTitle": "Después de un Incidente",
+  "topicRecoverSubtitle": "Recuperación, reclamos y próximos pasos",
+  "topicRecoverPrompt": "Mi casa sufrió daños. ¿Cómo empiezo a recuperarme y a presentar reclamos?",
+
+  "chatInputPlaceholder": "Escriba un mensaje…",
+  "copiedToClipboard": "Copiado al portapapeles",
+  "noConversationToShare": "Aún no hay conversación para compartir.",
+  "shareSubject": "Conversación con Disaster AIDvisor — {date}",
+  "shareHeader": "Conversación con Disaster AIDvisor — {date}",
+  "shareSpeakerYou": "Usted",
+  "shareSpeakerBot": "AIDvisor",
+
+  "menuShareConversation": "Compartir Conversación",
+  "menuClearChat": "Borrar Conversación",
+  "menuReportIssue": "Reportar un Problema",
+  "menuLogout": "Cerrar Sesión",
+  "menuDeleteAccount": "Eliminar Cuenta",
+  "menuTermsConditions": "Términos y Condiciones",
+  "menuLanguage": "Idioma",
+  "homeTooltip": "Volver al inicio",
+
+  "clearChatTitle": "Borrar Conversación",
+  "clearChatBody": "Esto eliminará permanentemente todo su historial de conversación. ¿Continuar?",
+  "cancel": "Cancelar",
+  "clear": "Borrar",
+
+  "languageEnglish": "English",
+  "languageSpanish": "Español"
+}

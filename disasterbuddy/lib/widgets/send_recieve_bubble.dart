@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../l10n/generated/app_localizations.dart';
 
 class SendBubble extends StatelessWidget {
   final String message;
@@ -22,7 +23,8 @@ class SendBubble extends StatelessWidget {
       child: GestureDetector(
         onLongPress: () async {
           await Clipboard.setData(ClipboardData(text: message));
-          Fluttertoast.showToast(msg: "Copied to clipboard");
+          Fluttertoast.showToast(
+              msg: AppLocalizations.of(context)!.copiedToClipboard);
         },
         child: Container(
           constraints: BoxConstraints(

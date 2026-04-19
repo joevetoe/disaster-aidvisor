@@ -10,7 +10,7 @@ class ChatService {
     _apiKey = key;
   }
 
-  static const _systemPrompt =
+  static const _systemPromptBase =
       "You are Disaster AIDvisor, a warm and concise disaster preparedness assistant for BuildSOS. "
       "Your responses must be short, conversational, and easy to skim. "
       "Default to 2-4 sentences. Only use a bulleted or numbered list when the user explicitly asks for steps, "
@@ -21,9 +21,22 @@ class ChatService {
       "For emergencies, remind the user to call 911. "
       "You are informational only and not a substitute for professional advice.";
 
-  Future<String> getChatResponse(List<ModelforMyBot> allmessages) async {
+  String _languageInstruction(String langCode) {
+    switch (langCode) {
+      case 'es':
+        return " Always respond in Spanish (Español) using a polite, formal register (usted).";
+      default:
+        return " Always respond in English.";
+    }
+  }
+
+  Future<String> getChatResponse(
+    List<ModelforMyBot> allmessages, {
+    String languageCode = 'en',
+  }) async {
+    final systemPrompt = _systemPromptBase + _languageInstruction(languageCode);
     final messagesWithSystem = [
-      {'role': 'system', 'content': _systemPrompt},
+      {'role': 'system', 'content': systemPrompt},
       ...allmessages.map((v) => v.toJson()),
     ];
     print(jsonEncode(messagesWithSystem));

@@ -2415,8 +2415,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xff1B2E4B),
-        leading: GestureDetector(
-          onTap: () {
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () {
             showMenu(
                 color: Colors.white,
                 context: context,
@@ -2485,10 +2486,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 ]);
             //
           },
-          child: const Icon(
-            Icons.menu,
-            color: Colors.white,
-          ),
         ),
         centerTitle: true,
         title: Text(
@@ -2520,8 +2517,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 },
               );
             }),
-          GestureDetector(
-            onTap: () {
+          IconButton(
+            icon: const Icon(Icons.person, color: Colors.white),
+            onPressed: () {
               showMenu(
                   color: Colors.white,
                   context: context,
@@ -2648,7 +2646,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     ),
                   ]);
             },
-            child: const Icon(Icons.person, color: Colors.white),
           ),
           // IconButton(
           //   onPressed: () {

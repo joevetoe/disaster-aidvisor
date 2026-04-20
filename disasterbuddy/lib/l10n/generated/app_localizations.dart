@@ -113,37 +113,37 @@ abstract class AppLocalizations {
   /// No description provided for @greetingMorningNamed.
   ///
   /// In en, this message translates to:
-  /// **'Good morning, {name}. I\'m at your service for preparation, response, and recovery. How may I help today?'**
+  /// **'Good morning, {name}. How may I help today?'**
   String greetingMorningNamed(String name);
 
   /// No description provided for @greetingAfternoonNamed.
   ///
   /// In en, this message translates to:
-  /// **'Good afternoon, {name}. I\'m at your service for preparation, response, and recovery. How may I help today?'**
+  /// **'Good afternoon, {name}. How may I help today?'**
   String greetingAfternoonNamed(String name);
 
   /// No description provided for @greetingEveningNamed.
   ///
   /// In en, this message translates to:
-  /// **'Good evening, {name}. I\'m at your service for preparation, response, and recovery. How may I help today?'**
+  /// **'Good evening, {name}. How may I help today?'**
   String greetingEveningNamed(String name);
 
   /// No description provided for @greetingMorningAnon.
   ///
   /// In en, this message translates to:
-  /// **'Good morning. I\'m your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?'**
+  /// **'Good morning. I\'m your Disaster AIDvisor. How may I help today?'**
   String get greetingMorningAnon;
 
   /// No description provided for @greetingAfternoonAnon.
   ///
   /// In en, this message translates to:
-  /// **'Good afternoon. I\'m your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?'**
+  /// **'Good afternoon. I\'m your Disaster AIDvisor. How may I help today?'**
   String get greetingAfternoonAnon;
 
   /// No description provided for @greetingEveningAnon.
   ///
   /// In en, this message translates to:
-  /// **'Good evening. I\'m your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?'**
+  /// **'Good evening. I\'m your Disaster AIDvisor. How may I help today?'**
   String get greetingEveningAnon;
 
   /// No description provided for @briefingLabel.
@@ -367,6 +367,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Español'**
   String get languageSpanish;
+
+  /// No description provided for @inputDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Disaster AIDvisor is for general informational purposes only and is not a substitute for emergency services — if you are in immediate danger, please call 911.'**
+  String get inputDisclaimer;
 }
 
 class _AppLocalizationsDelegate

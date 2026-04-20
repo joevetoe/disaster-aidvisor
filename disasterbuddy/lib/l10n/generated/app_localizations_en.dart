@@ -16,30 +16,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String greetingMorningNamed(String name) {
-    return 'Good morning, $name. I\'m at your service for preparation, response, and recovery. How may I help today?';
+    return 'Good morning, $name. How may I help today?';
   }
 
   @override
   String greetingAfternoonNamed(String name) {
-    return 'Good afternoon, $name. I\'m at your service for preparation, response, and recovery. How may I help today?';
+    return 'Good afternoon, $name. How may I help today?';
   }
 
   @override
   String greetingEveningNamed(String name) {
-    return 'Good evening, $name. I\'m at your service for preparation, response, and recovery. How may I help today?';
+    return 'Good evening, $name. How may I help today?';
   }
 
   @override
   String get greetingMorningAnon =>
-      'Good morning. I\'m your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?';
+      'Good morning. I\'m your Disaster AIDvisor. How may I help today?';
 
   @override
   String get greetingAfternoonAnon =>
-      'Good afternoon. I\'m your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?';
+      'Good afternoon. I\'m your Disaster AIDvisor. How may I help today?';
 
   @override
   String get greetingEveningAnon =>
-      'Good evening. I\'m your Disaster AIDvisor — at your service for preparation, response, and recovery. How may I help today?';
+      'Good evening. I\'m your Disaster AIDvisor. How may I help today?';
 
   @override
   String get briefingLabel => 'TODAY\'S BRIEFING';
@@ -169,4 +169,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageSpanish => 'Español';
+
+  @override
+  String get inputDisclaimer =>
+      'Disaster AIDvisor is for general informational purposes only and is not a substitute for emergency services — if you are in immediate danger, please call 911.';
 }

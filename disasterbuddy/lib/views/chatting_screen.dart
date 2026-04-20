@@ -2661,7 +2661,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
       body: Column(
         children: [
           buildChat(),
-          if (_showSuggestionChips) _buildSuggestionChipsRow(),
           Container(
             padding: EdgeInsets.fromLTRB(
                 20, 10, 20, MediaQuery.of(context).padding.bottom + 16),
@@ -2669,30 +2668,47 @@ class _ChattingScreenState extends State<ChattingScreen> {
               color: Colors.white,
               border: Border(top: BorderSide(color: Color(0xffE0E0E0), width: 0.5)),
             ),
-            child: Row(
-            children: [
-              ChatBox(
-                onChanged: (v) {
-                  setState(() {});
-                },
-                focusNode: _node,
-                controller: _controller,
-              ),
-              const SizedBox(width: 5.0),
-              CustomRoundButton(
-                onTap: () async {
-                  if (_controller.text.isNotEmpty) {
-                    final txt = _controller.text;
-                    _controller.clear();
-                    await _submitUserMessage(txt);
-                  }
-                },
-                icon: Icons.send_rounded,
-                iconSize: 20.0,
-                padding: 8.0,
-              )
-            ],
-          ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    ChatBox(
+                      onChanged: (v) {
+                        setState(() {});
+                      },
+                      focusNode: _node,
+                      controller: _controller,
+                    ),
+                    const SizedBox(width: 5.0),
+                    CustomRoundButton(
+                      onTap: () async {
+                        if (_controller.text.isNotEmpty) {
+                          final txt = _controller.text;
+                          _controller.clear();
+                          await _submitUserMessage(txt);
+                        }
+                      },
+                      icon: Icons.send_rounded,
+                      iconSize: 20.0,
+                      padding: 8.0,
+                    )
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  AppLocalizations.of(context)!.inputDisclaimer,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                      color: Color(0xff888888),
+                      fontSize: 12,
+                      height: 1.35,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -2702,12 +2718,12 @@ class _ChattingScreenState extends State<ChattingScreen> {
   buildChat() {
     final t = AppLocalizations.of(context)!;
     if (_showSuggestionChips) {
-      return Expanded(
+      return Flexible(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 28),
+              const SizedBox(height: 12),
               Center(
                 child: Image.asset(
                   "assets/images/newimage.jpeg",
@@ -2734,10 +2750,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xffFAF7F2),
+                  color: const Color(0xffFBEDEC),
                   borderRadius: BorderRadius.circular(4),
                   border: const Border(
-                    left: BorderSide(color: Color(0xffE8960C), width: 3),
+                    left: BorderSide(color: Color(0xffC62828), width: 3),
                   ),
                 ),
                 child: Column(
@@ -2772,7 +2788,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 messagetype: 'txt',
                 isSender: false,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 20),
+              _buildSuggestionChipsRow(),
+              const SizedBox(height: 32),
             ],
           ),
         ),

@@ -16,30 +16,30 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String greetingMorningNamed(String name) {
-    return 'Buenos días, $name. Estoy a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?';
+    return 'Buenos días, $name. ¿En qué puedo ayudarle hoy?';
   }
 
   @override
   String greetingAfternoonNamed(String name) {
-    return 'Buenas tardes, $name. Estoy a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?';
+    return 'Buenas tardes, $name. ¿En qué puedo ayudarle hoy?';
   }
 
   @override
   String greetingEveningNamed(String name) {
-    return 'Buenas noches, $name. Estoy a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?';
+    return 'Buenas noches, $name. ¿En qué puedo ayudarle hoy?';
   }
 
   @override
   String get greetingMorningAnon =>
-      'Buenos días. Soy su Disaster AIDvisor — a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?';
+      'Buenos días. Soy su Disaster AIDvisor. ¿En qué puedo ayudarle hoy?';
 
   @override
   String get greetingAfternoonAnon =>
-      'Buenas tardes. Soy su Disaster AIDvisor — a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?';
+      'Buenas tardes. Soy su Disaster AIDvisor. ¿En qué puedo ayudarle hoy?';
 
   @override
   String get greetingEveningAnon =>
-      'Buenas noches. Soy su Disaster AIDvisor — a su servicio para preparación, respuesta y recuperación. ¿En qué puedo ayudarle hoy?';
+      'Buenas noches. Soy su Disaster AIDvisor. ¿En qué puedo ayudarle hoy?';
 
   @override
   String get briefingLabel => 'RESUMEN DE HOY';
@@ -170,4 +170,8 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get languageSpanish => 'Español';
+
+  @override
+  String get inputDisclaimer =>
+      'Disaster AIDvisor es solo para fines informativos generales y no sustituye a los servicios de emergencia. Si se encuentra en peligro inmediato, llame al 911.';
 }

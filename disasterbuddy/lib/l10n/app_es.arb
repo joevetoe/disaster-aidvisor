@@ -2,7 +2,7 @@
   "@@locale": "es",
 
   "appTitle": "Disaster AIDvisor",
-  "tagline": "Preparar · Responder · Recuperar",
+  "tagline": "¿Tiene preguntas? Empiece aquí.",
 
   "greetingMorningNamed": "Buenos días, {name}. ¿En qué puedo ayudarle hoy?",
   "greetingAfternoonNamed": "Buenas tardes, {name}. ¿En qué puedo ayudarle hoy?",

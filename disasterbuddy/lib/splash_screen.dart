@@ -101,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Prepare. Respond. Recover.',
+                  'Have questions? Start here.',
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                       color: Color(0xff1B2E4B),

@@ -2282,6 +2282,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
   final BriefingService _briefingService = BriefingService();
   List<String>? _activeAlerts;
   bool _loadingAlerts = false;
+  bool _demoActiveAlert = false;
   bool _greetingSeeded = false;
 
   List<_SuggestionChip> _suggestionChipsFor(AppLocalizations t) => [
@@ -2348,6 +2349,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
     final dateStr = DateFormat('EEEE, MMMM d', locale).format(DateTime.now());
     final zip = (_zipCode?.trim().isNotEmpty ?? false) ? _zipCode!.trim() : null;
     final area = zip != null ? t.briefingAreaZip(zip) : t.briefingAreaGeneric;
+
+    if (_demoActiveAlert) {
+      return t.briefingAlertsSummary(dateStr, 'Hurricane Warning', area);
+    }
 
     if (_loadingAlerts) return t.briefingLoading(dateStr, area);
 
@@ -2725,9 +2730,19 @@ class _ChattingScreenState extends State<ChattingScreen> {
             children: [
               const SizedBox(height: 12),
               Center(
-                child: Image.asset(
-                  "assets/images/newimage.jpeg",
-                  height: 72,
+                child: GestureDetector(
+                  onLongPress: () {
+                    setState(() => _demoActiveAlert = !_demoActiveAlert);
+                    Fluttertoast.showToast(
+                      msg: _demoActiveAlert
+                          ? 'Demo alert: ON'
+                          : 'Demo alert: OFF',
+                    );
+                  },
+                  child: Image.asset(
+                    "assets/images/newimage.jpeg",
+                    height: 72,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -2886,50 +2901,70 @@ class _ChattingScreenState extends State<ChattingScreen> {
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: _suggestionChipsFor(t)
-            .map((c) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(6),
-                    onTap: () => _submitUserMessage(c.prompt),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                            color: const Color(0xffE8960C), width: 1),
+        children: _suggestionChipsFor(t).map((c) {
+          final recommended =
+              _demoActiveAlert && c.label == t.topicRespondTitle;
+          final borderColor = recommended
+              ? const Color(0xffC62828)
+              : const Color(0xffE8960C);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(6),
+              onTap: () => _submitUserMessage(c.prompt),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 18, vertical: 14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                      color: borderColor,
+                      width: recommended ? 1.5 : 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (recommended) ...[
+                      Text(
+                        'RECOMMENDED',
+                        style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                            fontSize: 10,
+                            color: Color(0xffC62828),
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            c.label,
-                            style: GoogleFonts.poppins(
-                              textStyle: const TextStyle(
-                                fontSize: 16,
-                                color: Color(0xff1B2E4B),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            c.subtitle,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color(0xff888888),
-                              letterSpacing: 0.2,
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 4),
+                    ],
+                    Text(
+                      c.label,
+                      style: GoogleFonts.poppins(
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          color: Color(0xff1B2E4B),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                ))
-            .toList(),
+                    const SizedBox(height: 2),
+                    Text(
+                      c.subtitle,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xff888888),
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

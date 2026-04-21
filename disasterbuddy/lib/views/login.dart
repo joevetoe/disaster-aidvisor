@@ -75,7 +75,7 @@ class _LoginState extends State<Login> {
                     // Tagline
                     Center(
                       child: Text(
-                        'Prepare. Respond. Recover.',
+                        'Have questions? Start here.',
                         style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             color: darkNavy,

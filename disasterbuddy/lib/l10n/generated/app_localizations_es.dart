@@ -12,7 +12,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Disaster AIDvisor';
 
   @override
-  String get tagline => 'Preparar · Responder · Recuperar';
+  String get tagline => '¿Tiene preguntas? Empiece aquí.';
 
   @override
   String greetingMorningNamed(String name) {

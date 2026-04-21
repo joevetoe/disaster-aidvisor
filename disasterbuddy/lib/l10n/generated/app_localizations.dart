@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @tagline.
   ///
   /// In en, this message translates to:
-  /// **'Prepare · Respond · Recover'**
+  /// **'Have questions? Start here.'**
   String get tagline;
 
   /// No description provided for @greetingMorningNamed.

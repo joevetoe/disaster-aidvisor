@@ -15,6 +15,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/colors.dart';
+import '../widgets/copyright_footer.dart';
 import 'emailverification.dart';
 import 'forgotpassword.dart';
 import 'signup.dart';
@@ -272,6 +273,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                     ),
+                    const CopyrightFooter(),
                   ],
                 ),
               ),

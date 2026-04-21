@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
+import '../widgets/copyright_footer.dart';
+
 class TermsConditions extends StatelessWidget {
   const TermsConditions({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Terms and Conditions"),
-        ),
-        body: const SafeArea(
-            child: Markdown(
+      appBar: AppBar(
+        title: const Text("Terms and Conditions"),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Expanded(
+                child: Markdown(
                 data: """Disaster AIDvisor – Terms and Conditions of Use
 Effective Date: [Insert Date]
 Last Updated: [Insert Date]
@@ -41,6 +46,11 @@ These Terms shall be governed by and construed in accordance with the laws of th
 For questions regarding these Terms or your use of the Service, please contact:  BuildSOS, LLC [Your Company Address] Email: [Your Contact Email] Phone: [Your Contact Number]
 13. Dispute Resolution and Binding Arbitration
 PLEASE READ THIS SECTION CAREFULLY. IT AFFECTS YOUR LEGAL RIGHTS.  You agree that any dispute, controversy, or claim arising out of or relating to your use of Disaster AIDvisor or these Terms — including but not limited to the interpretation, breach, enforcement, or validity of these Terms — shall be exclusively resolved through final and binding arbitration, rather than in court.  This arbitration agreement applies to all legal claims, whether arising under contract, tort, statute, regulation, or otherwise, and whether brought individually or as part of a class or other representative proceeding.  Arbitration shall be conducted in accordance with the Commercial Arbitration Rules of the American Arbitration Association (AAA). The arbitration will be held in New Orleans, Louisiana, unless the parties agree otherwise. The arbitration shall be conducted by a single neutral arbitrator mutually agreed upon by the parties or appointed under AAA rules. Each party shall bear its own attorneys’ fees and costs, unless otherwise awarded by the arbitrator under applicable law. The arbitrator's decision shall be final and binding, and judgment may be entered thereon in any court of competent jurisdiction.  By agreeing to these Terms, you and BuildSOS knowingly and voluntarily waive the right to a jury trial and agree that all claims must be brought individually and not as part of a class, collective, or representative action.  Notwithstanding the above, either party may seek equitable relief (such as a temporary restraining order or injunction) in a court of competent jurisdiction in Orleans Parish, Louisiana, for matters relating to intellectual property or misuse of confidential information.
-""")));
+""")),
+            const CopyrightFooter(),
+          ],
+        ),
+      ),
+    );
   }
 }

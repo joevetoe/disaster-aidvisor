@@ -21,6 +21,7 @@ import '../services/briefing_service.dart';
 import '../services/chat_service.dart';
 import '../services/locale_controller.dart';
 import '../widgets/chat_box.dart';
+import '../widgets/copyright_footer.dart';
 import '../widgets/custom_round_button.dart';
 import '../widgets/send_recieve_bubble.dart';
 import '../widgets/text_widget_custom.dart';
@@ -2712,6 +2713,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     ),
                   ),
                 ),
+                const CopyrightFooter(
+                    padding: EdgeInsets.only(top: 8)),
               ],
             ),
           ),

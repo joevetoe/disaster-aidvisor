@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../services/local_storage.dart';
+import '../widgets/copyright_footer.dart';
 import 'emailverification.dart';
 import 'login.dart';
 
@@ -390,6 +391,7 @@ class _SignupState extends State<Signup> {
                     ),
                   ),
                   const SizedBox(height: 24),
+                  const CopyrightFooter(),
                 ],
               ),
             ),

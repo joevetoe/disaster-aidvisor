@@ -6,6 +6,7 @@ import 'services/local_storage.dart';
 import 'views/emailverification.dart';
 import 'views/login.dart';
 import 'views/signup.dart';
+import 'widgets/copyright_footer.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -87,42 +88,49 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/images/newimage.jpeg",
-                  height: 160,
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Have questions? Start here.',
-                  style: GoogleFonts.poppins(
-                    textStyle: const TextStyle(
-                      color: Color(0xff1B2E4B),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                    ),
+      body: Column(
+        children: [
+          Expanded(
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 48),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/images/newimage.jpeg",
+                        height: 160,
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Have questions? Start here.',
+                        style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                            color: Color(0xff1B2E4B),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+                      const SizedBox(
+                        width: 32,
+                        height: 32,
+                        child: CircularProgressIndicator(
+                          color: Color(0xffE8960C),
+                          strokeWidth: 3,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 48),
-                const SizedBox(
-                  width: 32,
-                  height: 32,
-                  child: CircularProgressIndicator(
-                    color: Color(0xffE8960C),
-                    strokeWidth: 3,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          const SafeArea(top: false, child: CopyrightFooter()),
+        ],
       ),
     );
   }

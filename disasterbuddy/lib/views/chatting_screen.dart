@@ -2733,19 +2733,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
             children: [
               const SizedBox(height: 12),
               Center(
-                child: GestureDetector(
-                  onLongPress: () {
-                    setState(() => _demoActiveAlert = !_demoActiveAlert);
-                    Fluttertoast.showToast(
-                      msg: _demoActiveAlert
-                          ? 'Demo alert: ON'
-                          : 'Demo alert: OFF',
-                    );
-                  },
-                  child: Image.asset(
-                    "assets/images/newimage.jpeg",
-                    height: 72,
-                  ),
+                child: Image.asset(
+                  "assets/images/newimage.jpeg",
+                  height: 72,
                 ),
               ),
               const SizedBox(height: 12),
@@ -2764,40 +2754,63 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xffFBEDEC),
-                  borderRadius: BorderRadius.circular(4),
-                  border: const Border(
-                    left: BorderSide(color: Color(0xffC62828), width: 3),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onLongPress: () {
+                  debugPrint(
+                      '[demo] briefing long-press; toggling _demoActiveAlert');
+                  setState(() => _demoActiveAlert = !_demoActiveAlert);
+                  Fluttertoast.showToast(
+                    msg: _demoActiveAlert
+                        ? 'Demo alert: ON'
+                        : 'Demo alert: OFF',
+                  );
+                },
+                onDoubleTap: () {
+                  debugPrint(
+                      '[demo] briefing double-tap; toggling _demoActiveAlert');
+                  setState(() => _demoActiveAlert = !_demoActiveAlert);
+                  Fluttertoast.showToast(
+                    msg: _demoActiveAlert
+                        ? 'Demo alert: ON'
+                        : 'Demo alert: OFF',
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xffFBEDEC),
+                    borderRadius: BorderRadius.circular(4),
+                    border: const Border(
+                      left: BorderSide(color: Color(0xffC62828), width: 3),
+                    ),
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.briefingLabel,
-                      style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                          color: Color(0xff888888),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.5,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        t.briefingLabel,
+                        style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                            color: Color(0xff888888),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.5,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      _buildBriefing(t),
-                      style: const TextStyle(
-                        color: Color(0xff1B2E4B),
-                        fontSize: 13,
-                        height: 1.5,
+                      const SizedBox(height: 6),
+                      Text(
+                        _buildBriefing(t),
+                        style: const TextStyle(
+                          color: Color(0xff1B2E4B),
+                          fontSize: 13,
+                          height: 1.5,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 20),

@@ -37,7 +37,8 @@ class ChattingScreen extends StatefulWidget {
   State<ChattingScreen> createState() => _ChattingScreenState();
 }
 
-class _ChattingScreenState extends State<ChattingScreen> {
+class _ChattingScreenState extends State<ChattingScreen>
+    with SingleTickerProviderStateMixin {
   final ChatService _chatService = ChatService();
   final chatref = FirebaseDatabase.instance.ref('chats');
   List<String> userInput = [
@@ -2285,6 +2286,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
   bool _loadingAlerts = false;
   bool _demoActiveAlert = false;
   bool _greetingSeeded = false;
+  late final AnimationController _pulseController;
 
   List<_SuggestionChip> _suggestionChipsFor(AppLocalizations t) => [
         _SuggestionChip(
@@ -2310,8 +2312,18 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   @override
   void initState() {
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    )..repeat(reverse: true);
     callback();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUserProfile() async {
@@ -2911,6 +2923,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   Widget _buildSuggestionChipsRow() {
     final t = AppLocalizations.of(context)!;
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
     return Container(
       width: double.infinity,
       color: Colors.white,
@@ -2920,64 +2933,76 @@ class _ChattingScreenState extends State<ChattingScreen> {
         children: _suggestionChipsFor(t).map((c) {
           final recommended =
               _demoActiveAlert && c.label == t.topicRespondTitle;
-          final borderColor = recommended
-              ? const Color(0xffC62828)
-              : const Color(0xffE8960C);
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(6),
-              onTap: () => _submitUserMessage(c.prompt),
-              child: Container(
+          const recommendedBorder = Color(0xff4A90D9);
+          final borderColor =
+              recommended ? recommendedBorder : const Color(0xffE8960C);
+          final cardChild = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (recommended) ...[
+                Text(
+                  'RECOMMENDED',
+                  style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                      fontSize: 10,
+                      color: recommendedBorder,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+              ],
+              Text(
+                c.label,
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    color: Color(0xff1B2E4B),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                c.subtitle,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xff888888),
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          );
+          Widget buildCard(Color border) => Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                     horizontal: 18, vertical: 14),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(
-                      color: borderColor,
-                      width: recommended ? 1.5 : 1),
+                  border:
+                      Border.all(color: border, width: recommended ? 2.5 : 1),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (recommended) ...[
-                      Text(
-                        'RECOMMENDED',
-                        style: GoogleFonts.poppins(
-                          textStyle: const TextStyle(
-                            fontSize: 10,
-                            color: Color(0xffC62828),
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                    ],
-                    Text(
-                      c.label,
-                      style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                          fontSize: 16,
-                          color: Color(0xff1B2E4B),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      c.subtitle,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xff888888),
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                child: cardChild,
+              );
+          final card = (recommended && !reduceMotion)
+              ? AnimatedBuilder(
+                  animation: _pulseController,
+                  builder: (_, __) {
+                    final curved =
+                        Curves.easeInOut.transform(_pulseController.value);
+                    final alpha = 115 + (140 * (1 - curved)).round();
+                    return buildCard(recommendedBorder.withAlpha(alpha));
+                  },
+                )
+              : buildCard(borderColor);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(6),
+              onTap: () => _submitUserMessage(c.prompt),
+              child: card,
             ),
           );
         }).toList(),

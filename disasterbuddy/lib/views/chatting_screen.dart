@@ -2398,10 +2398,6 @@ class _ChattingScreenState extends State<ChattingScreen>
     setState(() {});
 
     _loadBriefing();
-
-    FirebaseFirestore.instance.collection('key').snapshots().listen((v) {
-      _chatService.setApiKey(v.docs.first.data()['key']);
-    });
   }
 
   @override

@@ -3,12 +3,11 @@ import 'package:disasterbuddy/views/chatting_screen.dart';
 import 'package:http/http.dart' as http;
 
 class ChatService {
-  String _apiKey =
-      'OPENAI_KEY_SCRUBBED';
-  static const _baseUrl = 'https://api.openai.com/v1/chat/completions';
-  setApiKey(key) {
-    _apiKey = key;
-  }
+  static const _apiKey = String.fromEnvironment('ANTHROPIC_API_KEY');
+  static const _baseUrl = 'https://api.anthropic.com/v1/messages';
+  static const _model = 'claude-sonnet-4-6';
+  static const _anthropicVersion = '2023-06-01';
+  static const _maxTokens = 1024;
 
   static const _systemPromptBase =
       "You are Disaster AIDvisor, a warm and concise disaster preparedness assistant for BuildSOS. "
@@ -34,33 +33,36 @@ class ChatService {
     List<ModelforMyBot> allmessages, {
     String languageCode = 'en',
   }) async {
+    if (_apiKey.isEmpty) {
+      throw StateError(
+        'ANTHROPIC_API_KEY not set. Build with --dart-define=ANTHROPIC_API_KEY=...',
+      );
+    }
+
     final systemPrompt = _systemPromptBase + _languageInstruction(languageCode);
-    final messagesWithSystem = [
-      {'role': 'system', 'content': systemPrompt},
-      ...allmessages.map((v) => v.toJson()),
-    ];
-    print(jsonEncode(messagesWithSystem));
+
     final response = await http.post(
       Uri.parse(_baseUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $_apiKey',
+        'x-api-key': _apiKey,
+        'anthropic-version': _anthropicVersion,
       },
       body: jsonEncode({
-        'model': 'gpt-3.5-turbo',
-        'messages': messagesWithSystem,
-        'max_tokens': 400,
-        'temperature': 0.7,
-        'top_p': 1.0,
+        'model': _model,
+        'max_tokens': _maxTokens,
+        'system': systemPrompt,
+        'messages': allmessages.map((v) => v.toJson()).toList(),
       }),
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      print(data['choices'][0]['message']['content'].trim());
-      return data['choices'][0]['message']['content'].trim();
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      return (data['content'][0]['text'] as String).trim();
     } else {
-      throw Exception('Failed to load response');
+      throw Exception(
+        'Anthropic request failed (${response.statusCode}): ${utf8.decode(response.bodyBytes)}',
+      );
     }
   }
 }

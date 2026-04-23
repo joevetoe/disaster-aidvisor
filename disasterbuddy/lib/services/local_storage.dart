@@ -6,11 +6,6 @@ class LocalDb {
     return prefs.getString("username");
   }
 
-  static Future<String?> getpassword() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString("password");
-  }
-
   static Future<String?> getuserid() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString("id");
@@ -26,10 +21,5 @@ class LocalDb {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("id", id);
     return null;
-  }
-
-  static setpassword({password}) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("password", password);
   }
 }

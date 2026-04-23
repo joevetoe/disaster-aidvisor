@@ -465,7 +465,6 @@ class _SignupState extends State<Signup> {
     CollectionReference users =
         FirebaseFirestore.instance.collection('users');
     await Future.delayed(const Duration(seconds: 1));
-    await LocalDb.setpassword(password: password);
     docid = users.id;
     await LocalDb.setusername(username: email);
     await users.add({
@@ -473,7 +472,6 @@ class _SignupState extends State<Signup> {
       'lastName': lastNameController.text,
       'zipCode': zipCodeController.text,
       'email': email,
-      'password': password,
       'emailverified': false,
     }).then((v) {
       docid = v.id;

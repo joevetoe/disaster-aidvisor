@@ -2284,8 +2284,9 @@ class _ChattingScreenState extends State<ChattingScreen>
   final BriefingService _briefingService = BriefingService();
   List<String>? _activeAlerts;
   bool _loadingAlerts = false;
-  bool _demoActiveAlert = false;
   bool _greetingSeeded = false;
+
+  bool get _hasActiveAlert => _activeAlerts?.isNotEmpty ?? false;
   late final AnimationController _pulseController;
 
   List<_SuggestionChip> _suggestionChipsFor(AppLocalizations t) => [
@@ -2378,10 +2379,6 @@ class _ChattingScreenState extends State<ChattingScreen>
     final dateStr = DateFormat('EEEE, MMMM d', locale).format(DateTime.now());
     final zip = (_zipCode?.trim().isNotEmpty ?? false) ? _zipCode!.trim() : null;
     final area = zip != null ? t.briefingAreaZip(zip) : t.briefingAreaGeneric;
-
-    if (_demoActiveAlert) {
-      return t.briefingAlertsSummary(dateStr, 'Hurricane Warning', area);
-    }
 
     if (_loadingAlerts) return t.briefingLoading(dateStr, area);
 
@@ -2799,29 +2796,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                 ),
               ),
               const SizedBox(height: 24),
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onLongPress: () {
-                  debugPrint(
-                      '[demo] briefing long-press; toggling _demoActiveAlert');
-                  setState(() => _demoActiveAlert = !_demoActiveAlert);
-                  Fluttertoast.showToast(
-                    msg: _demoActiveAlert
-                        ? 'Demo alert: ON'
-                        : 'Demo alert: OFF',
-                  );
-                },
-                onDoubleTap: () {
-                  debugPrint(
-                      '[demo] briefing double-tap; toggling _demoActiveAlert');
-                  setState(() => _demoActiveAlert = !_demoActiveAlert);
-                  Fluttertoast.showToast(
-                    msg: _demoActiveAlert
-                        ? 'Demo alert: ON'
-                        : 'Demo alert: OFF',
-                  );
-                },
-                child: Container(
+              Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -2857,7 +2832,6 @@ class _ChattingScreenState extends State<ChattingScreen>
                     ],
                   ),
                 ),
-              ),
               const SizedBox(height: 20),
               RecieveChatBubble(
                 message: conversationModel.first.message ?? '',
@@ -2968,7 +2942,7 @@ class _ChattingScreenState extends State<ChattingScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: _suggestionChipsFor(t).map((c) {
           final recommended =
-              _demoActiveAlert && c.label == t.topicRespondTitle;
+              _hasActiveAlert && c.label == t.topicRespondTitle;
           const recommendedBorder = Color(0xff4A90D9);
           final borderColor =
               recommended ? recommendedBorder : const Color(0xffE8960C);

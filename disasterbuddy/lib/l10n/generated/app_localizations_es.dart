@@ -107,6 +107,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chatInputPlaceholder => 'Escriba un mensaje…';
 
   @override
+  String get chatErrorGeneric =>
+      'Error: No se pudo obtener respuesta. Por favor, inténtelo de nuevo más tarde.';
+
+  @override
   String get copiedToClipboard => 'Copiado al portapapeles';
 
   @override

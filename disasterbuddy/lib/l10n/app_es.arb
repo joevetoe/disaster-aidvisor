@@ -30,6 +30,7 @@
   "topicRecoverPrompt": "Mi casa sufrió daños. ¿Cómo empiezo a recuperarme y a presentar reclamos?",
 
   "chatInputPlaceholder": "Escriba un mensaje…",
+  "chatErrorGeneric": "Error: No se pudo obtener respuesta. Por favor, inténtelo de nuevo más tarde.",
   "copiedToClipboard": "Copiado al portapapeles",
   "noConversationToShare": "Aún no hay conversación para compartir.",
   "shareSubject": "Conversación con Disaster AIDvisor — {date}",

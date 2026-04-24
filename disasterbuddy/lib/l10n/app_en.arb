@@ -64,6 +64,7 @@
   "topicRecoverPrompt": "My home was damaged. How do I start recovering and filing claims?",
 
   "chatInputPlaceholder": "Type a message…",
+  "chatErrorGeneric": "Error: Unable to get response. Please try again later.",
   "copiedToClipboard": "Copied to clipboard",
   "noConversationToShare": "No conversation to share yet.",
   "shareSubject": "Disaster AIDvisor Conversation — {date}",

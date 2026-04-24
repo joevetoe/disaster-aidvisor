@@ -248,6 +248,12 @@ abstract class AppLocalizations {
   /// **'Type a message…'**
   String get chatInputPlaceholder;
 
+  /// No description provided for @chatErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: Unable to get response. Please try again later.'**
+  String get chatErrorGeneric;
+
   /// No description provided for @copiedToClipboard.
   ///
   /// In en, this message translates to:

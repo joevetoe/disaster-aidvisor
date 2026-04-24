@@ -2293,18 +2293,34 @@ class _ChattingScreenState extends State<ChattingScreen>
           label: t.topicPrepareTitle,
           subtitle: t.topicPrepareSubtitle,
           prompt: t.topicPreparePrompt,
+          promptType: "topicPrepare",
         ),
         _SuggestionChip(
           label: t.topicRespondTitle,
           subtitle: t.topicRespondSubtitle,
           prompt: t.topicRespondPrompt,
+          promptType: "topicRespond",
         ),
         _SuggestionChip(
           label: t.topicRecoverTitle,
           subtitle: t.topicRecoverSubtitle,
           prompt: t.topicRecoverPrompt,
+          promptType: "topicRecover",
         ),
       ];
+
+  String? _topicPromptFor(String? type, AppLocalizations t) {
+    switch (type) {
+      case "topicPrepare":
+        return t.topicPreparePrompt;
+      case "topicRespond":
+        return t.topicRespondPrompt;
+      case "topicRecover":
+        return t.topicRecoverPrompt;
+      default:
+        return null;
+    }
+  }
 
   bool get _showSuggestionChips =>
       conversationModel.length == 1 &&
@@ -2410,16 +2426,37 @@ class _ChattingScreenState extends State<ChattingScreen>
       conversationModel.add(ConvModel(
         isSender: false,
         message: _buildGreeting(t),
-        messageType: "txt",
+        messageType: "greeting",
       ));
-    } else if (conversationModel.length == 1 &&
-        !(conversationModel.first.isSender ?? false)) {
-      // Fresh state — keep greeting in sync with current locale.
+    } else if (conversationModel.isNotEmpty &&
+        conversationModel.first.messageType == "greeting") {
       conversationModel[0] = ConvModel(
         isSender: false,
         message: _buildGreeting(t),
-        messageType: conversationModel.first.messageType,
+        messageType: "greeting",
       );
+    }
+
+    for (var i = 0; i < conversationModel.length; i++) {
+      final m = conversationModel[i];
+      if (m.messageType == "error") {
+        conversationModel[i] = ConvModel(
+          isSender: false,
+          message: t.chatErrorGeneric,
+          messageType: "error",
+          timestamp: m.timestamp,
+        );
+        continue;
+      }
+      final topicPrompt = _topicPromptFor(m.messageType, t);
+      if (topicPrompt != null) {
+        conversationModel[i] = ConvModel(
+          isSender: m.isSender,
+          message: topicPrompt,
+          messageType: m.messageType,
+          timestamp: m.timestamp,
+        );
+      }
     }
   }
 
@@ -2844,9 +2881,12 @@ class _ChattingScreenState extends State<ChattingScreen>
             shrinkWrap: true,
             itemBuilder: (itemBuilder, index) {
               final user = chats[index];
+              final isMedia = user.messageType == "image" ||
+                  user.messageType == "media";
+              final isText = !isMedia;
               return user.isSender
                   ? SendBubble(
-                      message: user.messageType == "txt"
+                      message: isText
                           ? (user.message ?? '')
                           : "Media Attached ",
                       messagetype: user.messageType ?? '',
@@ -2858,7 +2898,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                         Fluttertoast.showToast(msg: t.copiedToClipboard);
                       },
                       child: RecieveChatBubble(
-                          message: user.messageType == "txt"
+                          message: isText
                               ? (user.message ?? '')
                               : "Media Attached",
                           messagetype: user.messageType ?? '',
@@ -2867,7 +2907,7 @@ class _ChattingScreenState extends State<ChattingScreen>
             }));
   }
 
-  Future<void> _submitUserMessage(String txt) async {
+  Future<void> _submitUserMessage(String txt, {String messageType = "txt"}) async {
     final trimmed = txt.trim();
     if (trimmed.isEmpty) return;
 
@@ -2878,14 +2918,14 @@ class _ChattingScreenState extends State<ChattingScreen>
     chatref.child(emailKey).child(date).set({
       "message": trimmed,
       "isSender": true,
-      "messagetype": "txt",
+      "messagetype": messageType,
       "timestamp": date,
     });
 
     conversationModel.add(ConvModel(
         isSender: true,
         message: trimmed,
-        messageType: "txt",
+        messageType: messageType,
         timestamp: DateTime.now().toString()));
     conversationModel.add(ConvModel(
         isSender: false,
@@ -2997,7 +3037,7 @@ class _ChattingScreenState extends State<ChattingScreen>
             padding: const EdgeInsets.only(bottom: 8),
             child: InkWell(
               borderRadius: BorderRadius.circular(6),
-              onTap: () => _submitUserMessage(c.prompt),
+              onTap: () => _submitUserMessage(c.prompt, messageType: c.promptType),
               child: card,
             ),
           );
@@ -3047,6 +3087,7 @@ class _ChattingScreenState extends State<ChattingScreen>
           timestamp: DateTime.now().toString()));
       setState(() {});
     } catch (e) {
+      final errorMsg = AppLocalizations.of(context)!.chatErrorGeneric;
       date = DateTime.now().millisecondsSinceEpoch.toString();
       conversationModel.removeWhere((test) => test.message == "loading");
       chatref
@@ -3055,15 +3096,15 @@ class _ChattingScreenState extends State<ChattingScreen>
                   '')
           .child(date)
           .set({
-        "message": "Error: Unable to get response. Please try again later.",
+        "message": errorMsg,
         "isSender": false,
-        "messagetype": "txt",
+        "messagetype": "error",
         "timestamp": date,
       });
       conversationModel.add(ConvModel(
           isSender: false,
-          message: "Error: Unable to get response. Please try again later.",
-          messageType: "txt",
+          message: errorMsg,
+          messageType: "error",
           timestamp: DateTime.now().toString()));
       _controller.clear();
       setState(() {});
@@ -3639,10 +3680,12 @@ class _SuggestionChip {
   final String label;
   final String subtitle;
   final String prompt;
+  final String promptType;
 
   const _SuggestionChip({
     required this.label,
     required this.subtitle,
     required this.prompt,
+    required this.promptType,
   });
 }

@@ -56,12 +56,13 @@ class ChatService {
       }),
     );
 
+    final body = utf8.decode(response.bodyBytes);
     if (response.statusCode == 200) {
-      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      final data = jsonDecode(body);
       return (data['content'][0]['text'] as String).trim();
     } else {
       throw Exception(
-        'Anthropic request failed (${response.statusCode}): ${utf8.decode(response.bodyBytes)}',
+        'Anthropic request failed (${response.statusCode}): $body',
       );
     }
   }

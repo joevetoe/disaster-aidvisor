@@ -305,9 +305,10 @@ class _LoginState extends State<Login> {
             .collection('users')
             .doc(docid)
             .get()
-            .then((documentSnapshot) async {
-          log("${await documentSnapshot.data()?['emailverified']}");
-          if (await documentSnapshot.data()?['emailverified']) {
+            .then((documentSnapshot) {
+          final verified = documentSnapshot.data()?['emailverified'] == true;
+          log("emailverified=$verified");
+          if (verified) {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

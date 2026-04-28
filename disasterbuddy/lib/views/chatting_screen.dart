@@ -2774,7 +2774,10 @@ class _ChattingScreenState extends State<ChattingScreen>
       if (ctx == null) return;
       Scrollable.ensureVisible(
         ctx,
-        alignment: 0.0, // top of bubble at top of viewport
+        // ListView is `reverse: true`, so its "leading" edge is the
+        // bottom of the viewport. To pin the bubble's TOP to the
+        // viewport's top, align to the trailing edge — alignment: 1.0.
+        alignment: 1.0,
         duration: const Duration(milliseconds: 280),
         curve: Curves.easeOut,
       );

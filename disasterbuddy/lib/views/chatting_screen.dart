@@ -2776,14 +2776,14 @@ class _ChattingScreenState extends State<ChattingScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Center(
                 child: Image.asset(
                   "assets/images/newimage.jpeg",
-                  height: 72,
+                  height: 56,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Center(
                 child: Text(
                   t.tagline,
@@ -2798,7 +2798,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   padding: const EdgeInsets.all(16),
@@ -2835,13 +2835,13 @@ class _ChattingScreenState extends State<ChattingScreen>
                     ],
                   ),
                 ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               RecieveChatBubble(
                 message: conversationModel.first.message ?? '',
                 messagetype: 'txt',
                 isSender: false,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               _buildSuggestionChipsRow(),
               const SizedBox(height: 16),
             ],

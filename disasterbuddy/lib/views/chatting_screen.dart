@@ -2711,7 +2711,7 @@ class _ChattingScreenState extends State<ChattingScreen>
           buildChat(),
           Container(
             padding: EdgeInsets.fromLTRB(
-                20, 18, 20, MediaQuery.of(context).padding.bottom + 18),
+                20, 10, 20, MediaQuery.of(context).padding.bottom + 10),
             decoration: const BoxDecoration(
               color: Colors.white,
               border: Border(top: BorderSide(color: Color(0xffE0E0E0), width: 0.5)),
@@ -2743,7 +2743,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                     )
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
                 Text(
                   AppLocalizations.of(context)!.inputDisclaimer,
                   textAlign: TextAlign.center,
@@ -2756,7 +2756,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                   ),
                 ),
                 const CopyrightFooter(
-                    padding: EdgeInsets.only(top: 8)),
+                    padding: EdgeInsets.only(top: 4)),
               ],
             ),
           ),
@@ -2773,14 +2773,14 @@ class _ChattingScreenState extends State<ChattingScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Center(
                 child: Image.asset(
                   "assets/images/newimage.jpeg",
                   height: 72,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Center(
                 child: Text(
                   t.tagline,
@@ -2795,7 +2795,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   padding: const EdgeInsets.all(16),
@@ -2832,15 +2832,15 @@ class _ChattingScreenState extends State<ChattingScreen>
                     ],
                   ),
                 ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               RecieveChatBubble(
                 message: conversationModel.first.message ?? '',
                 messagetype: 'txt',
                 isSender: false,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               _buildSuggestionChipsRow(),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
             ],
           ),
         ),

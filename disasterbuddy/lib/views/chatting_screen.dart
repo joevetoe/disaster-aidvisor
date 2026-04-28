@@ -2746,7 +2746,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                     )
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 14),
                 Text(
                   AppLocalizations.of(context)!.inputDisclaimer,
                   textAlign: TextAlign.center,

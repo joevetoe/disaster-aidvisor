@@ -81,9 +81,14 @@ If a question is within scope but you genuinely don't have the detail (obscure s
   String _languageInstruction(String langCode) {
     switch (langCode) {
       case 'es':
-        return " Always respond in Spanish (Español) using a polite, formal register (usted).";
+        return '\n\n# OUTPUT LANGUAGE (overrides everything above)\n'
+            'You MUST write every response in Spanish (Español), without exception, '
+            'regardless of the language of the user\'s message or any examples '
+            'phrased in English in the prompt above. Use polite formal register (usted). '
+            'Do not switch to English even if the user writes to you in English.';
       default:
-        return " Always respond in English.";
+        return '\n\n# OUTPUT LANGUAGE\n'
+            'Respond in English.';
     }
   }
 

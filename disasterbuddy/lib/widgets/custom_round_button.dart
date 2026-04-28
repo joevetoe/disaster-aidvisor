@@ -22,7 +22,7 @@ class CustomRoundButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xffE8960C),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(6),
         ),
         padding: EdgeInsets.all(padding),
         child: Icon(

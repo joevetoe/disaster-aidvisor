@@ -74,11 +74,14 @@ class RecieveChatBubble extends StatelessWidget {
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.fromLTRB(13, 12, 16, 12),
         decoration: BoxDecoration(
           color: const Color(0xffF0F2F5),
           borderRadius: BorderRadius.circular(18).copyWith(
             bottomLeft: const Radius.circular(4),
+          ),
+          border: const Border(
+            left: BorderSide(color: Color(0xffE8960C), width: 3),
           ),
         ),
         child: message == "loading"

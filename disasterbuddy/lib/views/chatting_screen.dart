@@ -2717,7 +2717,6 @@ class _ChattingScreenState extends State<ChattingScreen>
                 MediaQuery.of(context).padding.bottom + 10),
             decoration: const BoxDecoration(
               color: Colors.white,
-              border: Border(top: BorderSide(color: Color(0xffE0E0E0), width: 0.5)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2768,11 +2767,27 @@ class _ChattingScreenState extends State<ChattingScreen>
     );
   }
 
+  Widget _fadeIntoInputBar({required Widget child}) {
+    return ShaderMask(
+      shaderCallback: (Rect bounds) {
+        return const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.black, Colors.black, Colors.transparent],
+          stops: [0.0, 0.94, 1.0],
+        ).createShader(bounds);
+      },
+      blendMode: BlendMode.dstIn,
+      child: child,
+    );
+  }
+
   buildChat() {
     final t = AppLocalizations.of(context)!;
     if (_showSuggestionChips) {
       return Flexible(
-        child: SingleChildScrollView(
+        child: _fadeIntoInputBar(
+          child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -2846,13 +2861,15 @@ class _ChattingScreenState extends State<ChattingScreen>
               const SizedBox(height: 16),
             ],
           ),
+          ),
         ),
       );
     }
 
     final chats = conversationModel.reversed.toList();
     return Expanded(
-        child: ListView.builder(
+        child: _fadeIntoInputBar(
+          child: ListView.builder(
             itemCount: chats.length,
             reverse: true,
             shrinkWrap: true,
@@ -2881,7 +2898,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                           messagetype: user.messageType ?? '',
                           isSender: false),
                     );
-            }));
+            })));
   }
 
   Future<void> _submitUserMessage(String txt, {String messageType = "txt"}) async {

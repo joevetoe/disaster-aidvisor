@@ -2276,6 +2276,7 @@ class _ChattingScreenState extends State<ChattingScreen>
   ];
 
   List<ConvModel> conversationModel = [];
+  final GlobalKey _latestAssistantBubbleKey = GlobalKey();
   final _controller = TextEditingController();
   var icon = Icons.mic_rounded;
   final _node = FocusNode();
@@ -2767,6 +2768,19 @@ class _ChattingScreenState extends State<ChattingScreen>
     );
   }
 
+  void _scrollLatestAssistantBubbleIntoView() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _latestAssistantBubbleKey.currentContext;
+      if (ctx == null) return;
+      Scrollable.ensureVisible(
+        ctx,
+        alignment: 0.0, // top of bubble at top of viewport
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
   Widget _fadeIntoInputBar({required Widget child}) {
     return ShaderMask(
       shaderCallback: (Rect bounds) {
@@ -2878,26 +2892,34 @@ class _ChattingScreenState extends State<ChattingScreen>
               final isMedia = user.messageType == "image" ||
                   user.messageType == "media";
               final isText = !isMedia;
-              return user.isSender
-                  ? SendBubble(
+              if (user.isSender) {
+                return SendBubble(
+                    message: isText
+                        ? (user.message ?? '')
+                        : "Media Attached ",
+                    messagetype: user.messageType ?? '',
+                    isSender: true);
+              }
+              final isLatestAssistantBubble =
+                  index == 0 && user.message != "loading";
+              return KeyedSubtree(
+                key: isLatestAssistantBubble
+                    ? _latestAssistantBubbleKey
+                    : null,
+                child: GestureDetector(
+                  onLongPress: () async {
+                    await Clipboard.setData(
+                        ClipboardData(text: user.message ?? ''));
+                    Fluttertoast.showToast(msg: t.copiedToClipboard);
+                  },
+                  child: RecieveChatBubble(
                       message: isText
                           ? (user.message ?? '')
-                          : "Media Attached ",
+                          : "Media Attached",
                       messagetype: user.messageType ?? '',
-                      isSender: true)
-                  : GestureDetector(
-                      onLongPress: () async {
-                        await Clipboard.setData(
-                            ClipboardData(text: user.message ?? ''));
-                        Fluttertoast.showToast(msg: t.copiedToClipboard);
-                      },
-                      child: RecieveChatBubble(
-                          message: isText
-                              ? (user.message ?? '')
-                              : "Media Attached",
-                          messagetype: user.messageType ?? '',
-                          isSender: false),
-                    );
+                      isSender: false),
+                ),
+              );
             })));
   }
 
@@ -2950,10 +2972,11 @@ class _ChattingScreenState extends State<ChattingScreen>
             message: responseInput[idx],
             messageType: "txt",
             timestamp: DateTime.now().toString()));
+        setState(() {});
+        _scrollLatestAssistantBubbleIntoView();
       } else {
         sendMessage(txt: trimmed, langCode: langCode);
       }
-      setState(() {});
     });
   }
 
@@ -3089,6 +3112,7 @@ class _ChattingScreenState extends State<ChattingScreen>
           messageType: "txt",
           timestamp: DateTime.now().toString()));
       setState(() {});
+      _scrollLatestAssistantBubbleIntoView();
     } catch (e) {
       final errorMsg = AppLocalizations.of(context)!.chatErrorGeneric;
       date = DateTime.now().millisecondsSinceEpoch.toString();

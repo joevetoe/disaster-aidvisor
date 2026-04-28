@@ -32,6 +32,12 @@ import 'package:intl/intl.dart';
 import 'login.dart';
 import 'reports.dart';
 
+// Sales/demo builds only — see RELEASE_CHECKLIST.md.
+// Build with --dart-define=ENABLE_DEMO_TOGGLE=true to enable the
+// long-press / double-tap demo alert toggle on the briefing card.
+const bool _kEnableDemoToggle =
+    bool.fromEnvironment('ENABLE_DEMO_TOGGLE', defaultValue: false);
+
 class ChattingScreen extends StatefulWidget {
   const ChattingScreen({super.key});
 
@@ -2288,8 +2294,10 @@ class _ChattingScreenState extends State<ChattingScreen>
   List<String>? _activeAlerts;
   bool _loadingAlerts = false;
   bool _greetingSeeded = false;
+  bool _demoActiveAlert = false;
 
-  bool get _hasActiveAlert => _activeAlerts?.isNotEmpty ?? false;
+  bool get _hasActiveAlert =>
+      (_activeAlerts?.isNotEmpty ?? false) || _demoActiveAlert;
   late final AnimationController _pulseController;
 
   List<_SuggestionChip> _suggestionChipsFor(AppLocalizations t) => [
@@ -2400,11 +2408,22 @@ class _ChattingScreenState extends State<ChattingScreen>
     return t.greetingEveningAnon;
   }
 
+  void _toggleDemoAlert() {
+    setState(() => _demoActiveAlert = !_demoActiveAlert);
+    Fluttertoast.showToast(
+      msg: _demoActiveAlert ? 'Demo alert: ON' : 'Demo alert: OFF',
+    );
+  }
+
   String _buildBriefing(AppLocalizations t) {
     final locale = Localizations.localeOf(context).languageCode;
     final dateStr = DateFormat('EEEE, MMMM d', locale).format(DateTime.now());
     final zip = (_zipCode?.trim().isNotEmpty ?? false) ? _zipCode!.trim() : null;
     final area = zip != null ? t.briefingAreaZip(zip) : t.briefingAreaGeneric;
+
+    if (_demoActiveAlert) {
+      return t.briefingAlertsSummary(dateStr, 'Hurricane Warning', area);
+    }
 
     if (_loadingAlerts) return t.briefingLoading(dateStr, area);
 
@@ -2856,7 +2875,11 @@ class _ChattingScreenState extends State<ChattingScreen>
                 ),
               ),
               const SizedBox(height: 12),
-              Container(
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onLongPress: _kEnableDemoToggle ? _toggleDemoAlert : null,
+                onDoubleTap: _kEnableDemoToggle ? _toggleDemoAlert : null,
+                child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -2892,6 +2915,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                     ],
                   ),
                 ),
+              ),
               const SizedBox(height: 8),
               RecieveChatBubble(
                 message: conversationModel.first.message ?? '',
@@ -3020,8 +3044,11 @@ class _ChattingScreenState extends State<ChattingScreen>
         children: _suggestionChipsFor(t).map((c) {
           final recommended =
               _hasActiveAlert && c.label == t.topicRespondTitle;
+          final realAlert = _activeAlerts?.isNotEmpty ?? false
+              ? _activeAlerts!.first
+              : 'Hurricane Warning';
           final effectivePrompt = recommended
-              ? t.topicRespondPromptForAlert(_activeAlerts!.first)
+              ? t.topicRespondPromptForAlert(realAlert)
               : c.prompt;
           const recommendedBorder = Color(0xff4A90D9);
           final borderColor =

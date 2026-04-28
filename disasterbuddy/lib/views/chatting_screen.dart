@@ -2885,6 +2885,12 @@ class _ChattingScreenState extends State<ChattingScreen>
     final trimmed = txt.trim();
     if (trimmed.isEmpty) return;
 
+    // Capture the locale at submit time. The 2-second canned-KB delay
+    // below means sendMessage runs *after* the user could have toggled
+    // the language picker; reading the locale there would mismatch the
+    // language the user actually saw when they tapped send.
+    final langCode = Localizations.localeOf(context).languageCode;
+
     final date = DateTime.now().millisecondsSinceEpoch.toString();
     final emailKey =
         FirebaseAuth.instance.currentUser?.email?.replaceAll('.', '') ?? '';
@@ -2925,7 +2931,7 @@ class _ChattingScreenState extends State<ChattingScreen>
             messageType: "txt",
             timestamp: DateTime.now().toString()));
       } else {
-        sendMessage(txt: trimmed);
+        sendMessage(txt: trimmed, langCode: langCode);
       }
       setState(() {});
     });
@@ -3024,7 +3030,7 @@ class _ChattingScreenState extends State<ChattingScreen>
     );
   }
 
-  sendMessage({txt}) async {
+  sendMessage({txt, required String langCode}) async {
     String? date;
     List<ModelforMyBot> allmessages = [];
     // {'role': 'system', 'content': 'You are a helpful assistant.'},
@@ -3039,7 +3045,6 @@ class _ChattingScreenState extends State<ChattingScreen>
       );
     }
     try {
-      final langCode = Localizations.localeOf(context).languageCode;
       final aiResponse = await _chatService
           .getChatResponse(allmessages, languageCode: langCode);
       date = DateTime.now().millisecondsSinceEpoch.toString();

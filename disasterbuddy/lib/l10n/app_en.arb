@@ -59,6 +59,10 @@
   "topicRespondTitle": "Response During an Event",
   "topicRespondSubtitle": "What to do as conditions develop",
   "topicRespondPrompt": "A major storm is heading my way. What should I do right now?",
+  "topicRespondPromptForAlert": "The {alert} is in effect for my area. What should I do right now?",
+  "@topicRespondPromptForAlert": {
+    "placeholders": {"alert": {"type": "String"}}
+  },
   "topicRecoverTitle": "After an Incident",
   "topicRecoverSubtitle": "Recovery, claims, and next steps",
   "topicRecoverPrompt": "My home was damaged. How do I start recovering and filing claims?",

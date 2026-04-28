@@ -25,6 +25,7 @@
   "topicRespondTitle": "Respuesta Durante un Evento",
   "topicRespondSubtitle": "Qué hacer según se desarrollen las condiciones",
   "topicRespondPrompt": "Una gran tormenta se dirige hacia mí. ¿Qué debo hacer ahora mismo?",
+  "topicRespondPromptForAlert": "Hay {alert} vigente para mi zona. ¿Qué debo hacer ahora mismo?",
   "topicRecoverTitle": "Después de un Incidente",
   "topicRecoverSubtitle": "Recuperación, reclamos y próximos pasos",
   "topicRecoverPrompt": "Mi casa sufrió daños. ¿Cómo empiezo a recuperarme y a presentar reclamos?",

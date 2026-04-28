@@ -224,6 +224,12 @@ abstract class AppLocalizations {
   /// **'A major storm is heading my way. What should I do right now?'**
   String get topicRespondPrompt;
 
+  /// No description provided for @topicRespondPromptForAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'The {alert} is in effect for my area. What should I do right now?'**
+  String topicRespondPromptForAlert(String alert);
+
   /// No description provided for @topicRecoverTitle.
   ///
   /// In en, this message translates to:

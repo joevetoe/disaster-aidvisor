@@ -93,6 +93,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'A major storm is heading my way. What should I do right now?';
 
   @override
+  String topicRespondPromptForAlert(String alert) {
+    return 'The $alert is in effect for my area. What should I do right now?';
+  }
+
+  @override
   String get topicRecoverTitle => 'After an Incident';
 
   @override

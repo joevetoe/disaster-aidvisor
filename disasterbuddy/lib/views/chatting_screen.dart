@@ -2943,6 +2943,9 @@ class _ChattingScreenState extends State<ChattingScreen>
         children: _suggestionChipsFor(t).map((c) {
           final recommended =
               _hasActiveAlert && c.label == t.topicRespondTitle;
+          final effectivePrompt = recommended
+              ? t.topicRespondPromptForAlert(_activeAlerts!.first)
+              : c.prompt;
           const recommendedBorder = Color(0xff4A90D9);
           final borderColor =
               recommended ? recommendedBorder : const Color(0xffE8960C);
@@ -3011,7 +3014,8 @@ class _ChattingScreenState extends State<ChattingScreen>
             padding: const EdgeInsets.only(bottom: 8),
             child: InkWell(
               borderRadius: BorderRadius.circular(6),
-              onTap: () => _submitUserMessage(c.prompt, messageType: c.promptType),
+              onTap: () =>
+                  _submitUserMessage(effectivePrompt, messageType: c.promptType),
               child: card,
             ),
           );

@@ -22,7 +22,7 @@ class ChatBox extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         decoration: BoxDecoration(
           color: const Color(0xffF0F2F5),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(6),
           border: Border.all(color: const Color(0xff1B2E4B)),
         ),
         child: Row(

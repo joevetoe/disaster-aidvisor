@@ -21,7 +21,7 @@ class CustomRoundButton extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xff1B2E4B),
+          color: const Color(0xffE8960C),
           borderRadius: BorderRadius.circular(14),
         ),
         padding: EdgeInsets.all(padding),

@@ -14,6 +14,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../data/release_notes.dart';
+import '../widgets/whats_new_modal.dart';
 import '../constants/colors.dart';
 import '../models/chat_model.dart';
 import '../l10n/generated/app_localizations.dart';
@@ -2328,6 +2330,8 @@ class _ChattingScreenState extends State<ChattingScreen>
       conversationModel.length == 1 &&
       !(conversationModel.first.isSender ?? false);
 
+  static const _whatsNewPrefsKey = '@buildsos/last_seen_version';
+
   @override
   void initState() {
     _pulseController = AnimationController(
@@ -2336,6 +2340,27 @@ class _ChattingScreenState extends State<ChattingScreen>
     )..repeat(reverse: true);
     callback();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _maybeShowWhatsNew();
+    });
+  }
+
+  Future<void> _maybeShowWhatsNew() async {
+    final release = latestReleaseNote;
+    if (release == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    final lastSeen = prefs.getString(_whatsNewPrefsKey);
+    if (lastSeen == kCurrentVersion) return;
+    if (!mounted) return;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => WhatsNewModal(
+        release: release,
+        onClose: () => Navigator.of(ctx).pop(),
+      ),
+    );
+    await prefs.setString(_whatsNewPrefsKey, kCurrentVersion);
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../l10n/generated/app_localizations.dart';
+import 'typing_dots.dart';
 
 class SendBubble extends StatelessWidget {
   final String message;
@@ -85,9 +86,9 @@ class RecieveChatBubble extends StatelessWidget {
           ),
         ),
         child: message == "loading"
-            ? Image.asset(
-                "assets/images/loading.gif",
-                height: 24,
+            ? const Padding(
+                padding: EdgeInsets.symmetric(vertical: 6),
+                child: TypingDots(),
               )
             : MarkdownBody(
                 data: message,

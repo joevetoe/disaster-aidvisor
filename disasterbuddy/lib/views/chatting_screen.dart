@@ -2751,7 +2751,10 @@ class _ChattingScreenState extends State<ChattingScreen>
           // ),
         ],
       ),
-      body: Column(
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Column(
         children: [
           buildChat(),
           Container(
@@ -2781,6 +2784,7 @@ class _ChattingScreenState extends State<ChattingScreen>
                         if (_controller.text.isNotEmpty) {
                           final txt = _controller.text;
                           _controller.clear();
+                          _node.unfocus();
                           await _submitUserMessage(txt);
                         }
                       },
@@ -2808,6 +2812,7 @@ class _ChattingScreenState extends State<ChattingScreen>
             ),
           ),
         ],
+      ),
       ),
     );
   }

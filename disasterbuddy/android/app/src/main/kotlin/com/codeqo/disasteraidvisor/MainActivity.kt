@@ -1,4 +1,4 @@
-package com.codeqo.disasteradvisor
+package com.codeqo.disasteraidvisor
 
 import io.flutter.embedding.android.FlutterActivity
 

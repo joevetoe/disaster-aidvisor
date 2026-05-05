@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -23,7 +24,12 @@ class _SignupState extends State<Signup> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController streetController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController stateController = TextEditingController();
   final TextEditingController zipCodeController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController referralCodeController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -35,7 +41,11 @@ class _SignupState extends State<Signup> {
   bool get _allFieldsFilled =>
       firstNameController.text.isNotEmpty &&
       lastNameController.text.isNotEmpty &&
+      streetController.text.isNotEmpty &&
+      cityController.text.isNotEmpty &&
+      stateController.text.isNotEmpty &&
       zipCodeController.text.isNotEmpty &&
+      phoneController.text.isNotEmpty &&
       _emailController.text.isNotEmpty &&
       _passwordController.text.isNotEmpty &&
       _confirmPasswordController.text.isNotEmpty &&
@@ -80,6 +90,29 @@ class _SignupState extends State<Signup> {
     );
   }
 
+  Widget _textField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    TextInputType? keyboardType,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    List<TextInputFormatter>? inputFormatters,
+    int? maxLength,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      textCapitalization: textCapitalization,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
+      onChanged: (_) => setState(() {}),
+      decoration: _fieldDecoration(hint: hint, icon: icon).copyWith(
+        counterText: '',
+      ),
+      style: const TextStyle(fontSize: 16, color: Colors.black),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,97 +120,205 @@ class _SignupState extends State<Signup> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: _darkNavy, size: 20),
           onPressed: () => Navigator.pop(context),
+        ),
+        title: Image.asset(
+          "assets/images/newimage.jpeg",
+          height: 36,
+          fit: BoxFit.contain,
         ),
       ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Logo
-                  Center(
-                    child: Image.asset(
-                      "assets/images/newimage.jpeg",
-                      height: 120,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Heading
-                  Center(
-                    child: Text(
-                      'Create Your Account',
-                      style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                          color: _darkNavy,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                        ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Create Your BuildSOS Profile',
+                    style: GoogleFonts.poppins(
+                      textStyle: const TextStyle(
+                        color: _darkNavy,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 8),
+                  Text(
+                    "It's free to sign up. Fill in your details below:",
+                    style: GoogleFonts.poppins(
+                      textStyle: const TextStyle(
+                        color: Color(0xff666666),
+                        fontSize: 15,
+                        height: 1.45,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
 
-                  // First Name
-                  TextField(
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffF9FAFB),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text.rich(
+                      TextSpan(
+                        style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                            color: Color(0xff374151),
+                            fontSize: 15,
+                            height: 1.6,
+                          ),
+                        ),
+                        children: [
+                          const TextSpan(text: 'When you sign up for '),
+                          TextSpan(
+                            text: 'Disaster AIDvisor',
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff374151),
+                                fontSize: 15,
+                                height: 1.6,
+                              ),
+                            ),
+                          ),
+                          const TextSpan(
+                              text:
+                                  ', you\u2019ll automatically become a '),
+                          TextSpan(
+                            text: 'BuildSOS',
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff374151),
+                                fontSize: 15,
+                                height: 1.6,
+                              ),
+                            ),
+                          ),
+                          const TextSpan(
+                              text:
+                                  ' member\u2014your "home base" for preparing, responding, and recovering from disasters. As a member, you\u2019ll gain full access at '),
+                          TextSpan(
+                            text: 'buildsos.com',
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff2563EB),
+                                fontSize: 15,
+                                height: 1.6,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                          const TextSpan(text: '.'),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  _textField(
                     controller: firstNameController,
+                    hint: 'First Name',
+                    icon: Icons.person_outline,
                     textCapitalization: TextCapitalization.words,
-                    onChanged: (_) => setState(() {}),
-                    decoration: _fieldDecoration(
-                      hint: 'First Name',
-                      icon: Icons.person_outline,
-                    ),
-                    style: const TextStyle(fontSize: 16, color: Colors.black),
                   ),
                   const SizedBox(height: 14),
 
-                  // Last Name
-                  TextField(
+                  _textField(
                     controller: lastNameController,
+                    hint: 'Last Name',
+                    icon: Icons.person_outline,
                     textCapitalization: TextCapitalization.words,
-                    onChanged: (_) => setState(() {}),
-                    decoration: _fieldDecoration(
-                      hint: 'Last Name',
-                      icon: Icons.person_outline,
-                    ),
-                    style: const TextStyle(fontSize: 16, color: Colors.black),
                   ),
                   const SizedBox(height: 14),
 
-                  // Zip Code
-                  TextField(
-                    controller: zipCodeController,
-                    keyboardType: TextInputType.number,
-                    onChanged: (_) => setState(() {}),
-                    decoration: _fieldDecoration(
-                      hint: 'Zip Code',
-                      icon: Icons.location_on_outlined,
-                    ),
-                    style: const TextStyle(fontSize: 16, color: Colors.black),
+                  _textField(
+                    controller: streetController,
+                    hint: 'Street Address',
+                    icon: Icons.home_outlined,
+                    textCapitalization: TextCapitalization.words,
                   ),
                   const SizedBox(height: 14),
 
-                  // Email
-                  TextField(
+                  _textField(
+                    controller: cityController,
+                    hint: 'City',
+                    icon: Icons.location_city_outlined,
+                    textCapitalization: TextCapitalization.words,
+                  ),
+                  const SizedBox(height: 14),
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _textField(
+                          controller: stateController,
+                          hint: 'State',
+                          icon: Icons.map_outlined,
+                          textCapitalization: TextCapitalization.characters,
+                          maxLength: 2,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[A-Za-z]')),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _textField(
+                          controller: zipCodeController,
+                          hint: 'Zip Code',
+                          icon: Icons.location_on_outlined,
+                          keyboardType: TextInputType.number,
+                          maxLength: 10,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9-]')),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  _textField(
+                    controller: phoneController,
+                    hint: 'Phone Number',
+                    icon: Icons.phone_outlined,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 14),
+
+                  _textField(
+                    controller: referralCodeController,
+                    hint: 'Referral Code (optional)',
+                    icon: Icons.card_giftcard_outlined,
+                    textCapitalization: TextCapitalization.characters,
+                    maxLength: 12,
+                  ),
+                  const SizedBox(height: 14),
+
+                  _textField(
                     controller: _emailController,
+                    hint: 'Email',
+                    icon: Icons.mail_outline,
                     keyboardType: TextInputType.emailAddress,
-                    onChanged: (_) => setState(() {}),
-                    decoration: _fieldDecoration(
-                      hint: 'Email',
-                      icon: Icons.mail_outline,
-                    ),
-                    style: const TextStyle(fontSize: 16, color: Colors.black),
                   ),
                   const SizedBox(height: 14),
 
-                  // Password
                   TextField(
                     obscureText: !_isPasswordVisible,
                     controller: _passwordController,
@@ -204,7 +345,6 @@ class _SignupState extends State<Signup> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Confirm Password
                   TextField(
                     obscureText: !_isConfirmPasswordVisible,
                     controller: _confirmPasswordController,
@@ -232,7 +372,6 @@ class _SignupState extends State<Signup> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Privacy policy checkbox
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -280,7 +419,8 @@ class _SignupState extends State<Signup> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const _PrivacyPolicyScreen(),
+                                        builder: (context) =>
+                                            const _PrivacyPolicyScreen(),
                                       ),
                                     );
                                   },
@@ -293,7 +433,6 @@ class _SignupState extends State<Signup> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Disclaimer checkbox
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -332,10 +471,11 @@ class _SignupState extends State<Signup> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Sign Up button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _allFieldsFilled ? _darkNavy : const Color(0xffCCCCCC),
+                      backgroundColor: _allFieldsFilled
+                          ? _darkNavy
+                          : const Color(0xffCCCCCC),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -356,7 +496,6 @@ class _SignupState extends State<Signup> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Already have account
                   Center(
                     child: Text.rich(
                       TextSpan(
@@ -391,7 +530,7 @@ class _SignupState extends State<Signup> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const CopyrightFooter(),
+                  const Center(child: CopyrightFooter()),
                 ],
               ),
             ),
@@ -414,16 +553,20 @@ class _SignupState extends State<Signup> {
       return;
     }
 
-    final email = _emailController.text;
+    final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
     if (email.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty ||
-        firstNameController.text.isEmpty ||
-        lastNameController.text.isEmpty ||
-        zipCodeController.text.isEmpty) {
+        firstNameController.text.trim().isEmpty ||
+        lastNameController.text.trim().isEmpty ||
+        streetController.text.trim().isEmpty ||
+        cityController.text.trim().isEmpty ||
+        stateController.text.trim().isEmpty ||
+        zipCodeController.text.trim().isEmpty ||
+        phoneController.text.trim().isEmpty) {
       Fluttertoast.showToast(
         msg: "Please fill in all fields",
         toastLength: Toast.LENGTH_LONG,
@@ -439,6 +582,18 @@ class _SignupState extends State<Signup> {
     if (!emailRegex.hasMatch(email)) {
       Fluttertoast.showToast(
         msg: "Invalid email address",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.SNACKBAR,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        fontSize: 14.0,
+      );
+      return;
+    }
+
+    if (stateController.text.trim().length != 2) {
+      Fluttertoast.showToast(
+        msg: "State must be a 2-letter code (e.g. LA)",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
         backgroundColor: Colors.black54,
@@ -467,13 +622,24 @@ class _SignupState extends State<Signup> {
     await Future.delayed(const Duration(seconds: 1));
     docid = users.id;
     await LocalDb.setusername(username: email);
-    await users.add({
-      'firstName': firstNameController.text,
-      'lastName': lastNameController.text,
-      'zipCode': zipCodeController.text,
+
+    final referralCode = referralCodeController.text.trim().toUpperCase();
+    final userDoc = <String, dynamic>{
+      'firstName': firstNameController.text.trim(),
+      'lastName': lastNameController.text.trim(),
+      'streetAddress': streetController.text.trim(),
+      'city': cityController.text.trim(),
+      'state': stateController.text.trim().toUpperCase(),
+      'zipCode': zipCodeController.text.trim(),
+      'phone': phoneController.text.trim(),
       'email': email,
       'emailverified': false,
-    }).then((v) {
+    };
+    if (referralCode.isNotEmpty) {
+      userDoc['referralCode'] = referralCode;
+    }
+
+    await users.add(userDoc).then((v) {
       docid = v.id;
       Navigator.pushReplacement(
           context,

@@ -18,9 +18,23 @@ class ReleaseNote {
   });
 }
 
-const String kCurrentVersion = '1.1.0';
+const String kCurrentVersion = '1.1.2';
 
 const List<ReleaseNote> releaseNotes = [
+  ReleaseNote(
+    version: '1.1.2',
+    title: "What's New",
+    date: '2026-05-18',
+    highlights: [
+      'Updated sign-up to match the BuildSOS family — same fields across all BuildSOS apps.',
+      'Smarter assistant powered by Claude — sharper, more conversational replies.',
+      'Now available in English and Spanish — switch from the menu anytime.',
+      'Refreshed home screen with all three topic prompts visible at a glance.',
+      'New chat send button and message bubbles with the BuildSOS accent.',
+      'Typing indicator while the assistant is preparing a reply.',
+      'Long replies now anchor to the top so you don’t lose your place.',
+    ],
+  ),
   ReleaseNote(
     version: '1.1.0',
     title: "What's New",

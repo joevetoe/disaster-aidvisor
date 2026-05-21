@@ -2339,6 +2339,7 @@ class _ChattingScreenState extends State<ChattingScreen>
       !(conversationModel.first.isSender ?? false);
 
   static const _whatsNewPrefsKey = '@buildsos/last_seen_version';
+  static bool _whatsNewShownThisSession = false;
 
   @override
   void initState() {
@@ -2354,12 +2355,16 @@ class _ChattingScreenState extends State<ChattingScreen>
   }
 
   Future<void> _maybeShowWhatsNew() async {
+    if (_whatsNewShownThisSession) return;
+    _whatsNewShownThisSession = true;
+
     final release = latestReleaseNote;
     if (release == null) return;
     final prefs = await SharedPreferences.getInstance();
     final lastSeen = prefs.getString(_whatsNewPrefsKey);
     if (lastSeen == kCurrentVersion) return;
     if (!mounted) return;
+    await prefs.setString(_whatsNewPrefsKey, kCurrentVersion);
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -2368,7 +2373,6 @@ class _ChattingScreenState extends State<ChattingScreen>
         onClose: () => Navigator.of(ctx).pop(),
       ),
     );
-    await prefs.setString(_whatsNewPrefsKey, kCurrentVersion);
   }
 
   @override

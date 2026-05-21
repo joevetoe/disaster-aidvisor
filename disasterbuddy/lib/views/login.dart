@@ -293,36 +293,27 @@ class _LoginState extends State<Login> {
           password: _passwordController.text);
       await prefs.setBool('isLogin', true);
       await Future.delayed(const Duration(seconds: 1));
-      QuerySnapshot snapshot =
-          await FirebaseFirestore.instance.collection('users').get();
-      for (var doc in snapshot.docs) {
-        String docId = doc.id;
-        if (doc['email'] == FirebaseAuth.instance.currentUser?.email) {
-          docid = docId;
-          await LocalDb.setuserid(id: docid);
-        }
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(docid)
-            .get()
-            .then((documentSnapshot) {
-          final verified = documentSnapshot.data()?['emailverified'] == true;
-          log("emailverified=$verified");
-          if (verified) {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        const ChattingScreen()));
-          } else {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        const EmailVerificationScreen()));
-          }
-        });
-      }
+      final email = FirebaseAuth.instance.currentUser?.email;
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+      if (snapshot.docs.isEmpty) return;
+      final doc = snapshot.docs.first;
+      docid = doc.id;
+      await LocalDb.setuserid(id: docid);
+      final verified = doc.data()['emailverified'] == true;
+      log("emailverified=$verified");
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => verified
+              ? const ChattingScreen()
+              : const EmailVerificationScreen(),
+        ),
+      );
     } on FirebaseAuthException catch (e) {
       String message = '';
       if (e.code == 'invalid-email') {
